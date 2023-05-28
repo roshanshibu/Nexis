@@ -13,6 +13,10 @@ const srhMarkerIcon = new Icon({
 
 const Home = () => {
 	const [car1Position, setCar1Position] = useState([49.409684, 8.660309]);
+	const [car1Direction, setCar1Direction] = useState("east");
+	
+	const [car2Position, setCar2Position] = useState([49.404036, 8.677261]);
+	const [car2Direction, setCar2Direction] = useState("west");
     return (
 		<MapContainer center={[49.4043, 8.6758]} zoom={14}>
 			<TileLayer
@@ -32,13 +36,24 @@ const Home = () => {
 				click: (e) => {
 					console.log(e.target.options.data);  // console log contents of data
 					setCar1Position([49.410270, 8.657739])
+					setCar1Direction("northwest")
+					setCar2Position([49.402713, 8.678520])
 				},
 				}}>
 					<Popup><p>I go here!</p></Popup>
 			</Marker>
 			<CarIcon 
 				position={car1Position} 
-				duration={1000} 
+				duration={1000}
+				direction={car1Direction} 
+				data={{hi:"there"}} 
+				message={"box to overtake"}/>
+			
+			
+			<CarIcon 
+				position={car2Position} 
+				duration={1000}
+				direction={car2Direction} 
 				data={{hi:"there"}} 
 				message={"box to overtake"}/>
 		</MapContainer>
