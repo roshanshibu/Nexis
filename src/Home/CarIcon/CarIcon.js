@@ -1,6 +1,7 @@
 import ReactLeafletDriftMarker from "react-leaflet-drift-marker"
 import { Popup } from "react-leaflet";
 import { Icon } from "leaflet";
+import "./CarIcon.css"
 
 const carMarkerWest = new Icon({
     iconUrl: require("../../Images/car_west.png"),

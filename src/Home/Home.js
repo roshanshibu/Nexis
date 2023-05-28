@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
+import { MapContainer, Marker, TileLayer, Popup, Polyline } from "react-leaflet";
 import { Icon } from "leaflet";
 import "./Home.css";
 import ReactLeafletDriftMarker from "react-leaflet-drift-marker"
@@ -17,6 +17,9 @@ const Home = () => {
 	
 	const [car2Position, setCar2Position] = useState([49.404036, 8.677261]);
 	const [car2Direction, setCar2Direction] = useState("west");
+
+	const [pathLine, setPathLine] = useState([[49.408365, 8.665114], [49.408104, 8.66912], [49.409165, 8.669863], [49.408839, 8.672959]]);
+
     return (
 		<MapContainer center={[49.4043, 8.6758]} zoom={14}>
 			<TileLayer
@@ -56,6 +59,8 @@ const Home = () => {
 				direction={car2Direction} 
 				data={{hi:"there"}} 
 				message={"box to overtake"}/>
+			
+			<Polyline positions={pathLine} color={'red'} />
 		</MapContainer>
 	);
 }
