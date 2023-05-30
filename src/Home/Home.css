@@ -1,4 +1,46 @@
+.homeContainer{
+  display: flex;
+  flex-direction: column;
+  background-color: #001520;
+  height: 100vh;
+  padding: 30px 90px 0px 90px;
+}
+
+.f{
+  color: white;
+  line-height: 0;
+  margin: 0.6em;
+}
+.fSmall{
+  font-size: 25px;
+}
+.fMedium{
+  font-size: 30px;
+}
+.fLight{
+  font-weight: 100;
+}
+
+.userDetailsRow{
+  display: flex;
+  flex-direction: row;
+  align-self: self-end;
+  text-align: right;
+  align-items: center;
+}
+.avatar{
+  width: 60px;
+  height: 60px;
+  border-radius: 60px;
+}
+
 .leaflet-container {
-    width: 80%;
-    height: 80vh;
+    height: 75vh;
+    border-radius: 20px;
   }
+.leaflet-top{
+  display: none;
+}
+.leaflet-bottom{
+  display: none;
+}
