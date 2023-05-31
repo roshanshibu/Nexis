@@ -3,7 +3,7 @@
   flex-direction: column;
   background-color: #001520;
   height: 100vh;
-  padding: 30px 90px 0px 90px;
+  padding: 0px 90px 0px 90px;
 }
 
 .f{
@@ -12,10 +12,10 @@
   margin: 0.6em;
 }
 .fSmall{
-  font-size: 25px;
+  font-size: 15px;
 }
 .fMedium{
-  font-size: 30px;
+  font-size: 20px;
 }
 .fLight{
   font-weight: 100;
@@ -27,15 +27,15 @@
   align-self: self-end;
   text-align: right;
   align-items: center;
+  margin-top: 30px;
 }
 .avatar{
-  width: 60px;
-  height: 60px;
+  width: 40px;
   border-radius: 60px;
 }
 
 .leaflet-container {
-    height: 75vh;
+    height: 65vh;
     border-radius: 20px;
   }
 .leaflet-top{
