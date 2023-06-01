@@ -13,6 +13,8 @@ import CarIcon from './CarIcon/CarIcon';
 import Avatar from '../Images/avatar.jpeg';
 import { getAllPaths } from '../API/Paths';
 
+import io from 'socket.io-client';
+
 const srhMarkerIcon = new Icon({
   iconUrl: require('../Images/SRH_Icon.png'),
   iconSize: [45, 38],
@@ -28,14 +30,31 @@ const Home = () => {
   const [showAvailablePaths, setShowAvailablePaths] = useState(true);
   const [availablePaths, setAvailablePaths] = useState(null);
 
+  const [socket, setSocket] = useState(null)
+
 	useEffect(() => {
+		if(socket === null)
+		{
+			setSocket(io("ws://localhost:8765"))
+		}
+		if(socket)
+		{
+			socket.on('connect', () => {
+				console.log("Connected")
+			})
+
+			socket.on('location', (data) => {
+				console.log(data)
+			})
+		}
+		
 		getAllPaths().then(response => {
 			console.log(response)
 			if (showAvailablePaths){
 				setAvailablePaths(response);
 			}
 		});
-	}, [])
+	}, [socket])
     return (
 		<div className="homeContainer">
 			<div className="userDetailsRow">
