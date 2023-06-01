@@ -1,27 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { MapContainer, Marker, TileLayer, Popup, Polyline } from "react-leaflet";
-import { Icon } from "leaflet";
-import "./Home.css";
-import ReactLeafletDriftMarker from "react-leaflet-drift-marker"
-import CarIcon from "./CarIcon/CarIcon";
-import Avatar from "../Images/avatar.jpeg"
-import { getAllPaths } from "../API/Paths";
+import React, { useEffect, useState } from 'react';
+import {
+  MapContainer,
+  Marker,
+  TileLayer,
+  Popup,
+  Polyline,
+} from 'react-leaflet';
+import { Icon } from 'leaflet';
+import './Home.css';
+import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
+import CarIcon from './CarIcon/CarIcon';
+import Avatar from '../Images/avatar.jpeg';
+import { getAllPaths } from '../API/Paths';
 
 const srhMarkerIcon = new Icon({
-    iconUrl: require("../Images/SRH_Icon.png"),
-    iconSize: [45, 38]
-  })
-
+  iconUrl: require('../Images/SRH_Icon.png'),
+  iconSize: [45, 38],
+});
 
 const Home = () => {
-	const [car1Position, setCar1Position] = useState([49.409684, 8.660309]);
-	const [car1Direction, setCar1Direction] = useState("east");
-	
-	const [car2Position, setCar2Position] = useState([49.404036, 8.677261]);
-	const [car2Direction, setCar2Direction] = useState("west");
+  const [car1Position, setCar1Position] = useState([49.409684, 8.660309]);
+  const [car1Direction, setCar1Direction] = useState('east');
 
-	const [showAvailablePaths, setShowAvailablePaths] = useState(true);
-	const [availablePaths, setAvailablePaths] = useState(null);
+  const [car2Position, setCar2Position] = useState([49.404036, 8.677261]);
+  const [car2Direction, setCar2Direction] = useState('west');
+
+  const [showAvailablePaths, setShowAvailablePaths] = useState(true);
+  const [availablePaths, setAvailablePaths] = useState(null);
 
 	useEffect(() => {
 		getAllPaths().then(response => {
@@ -47,7 +52,6 @@ const Home = () => {
 				<TileLayer
 				attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
 				url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-				// url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
 				// url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
 				// url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
 				// url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
@@ -83,16 +87,20 @@ const Home = () => {
 					data={{hi:"there"}} 
 					message={"box to overtake"}/>
 
-				{
-					showAvailablePaths &&
-					availablePaths &&
-					availablePaths.map((path) => {
-						return (<Polyline positions={path} color={'#00a3ff66'} key={path[0][0]+path[path.length-1][0]} />)
-					})
-				}	
-			</MapContainer>
-		</div>
-	);
-}
+        {showAvailablePaths &&
+          availablePaths &&
+          availablePaths.map((path) => {
+            return (
+              <Polyline
+                positions={path}
+                color={'#00a3ff66'}
+                key={path[0][0] + path[path.length - 1][0]}
+              />
+            );
+          })}
+      </MapContainer>
+    </div>
+  );
+};
 
 export default Home;
