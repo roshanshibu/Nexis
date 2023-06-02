@@ -1,33 +1,30 @@
-import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
+import {LeafletTrackingMarker} from 'react-leaflet-tracking-marker'
 import { Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import './CarIcon.css';
+import { useEffect, useState } from 'react';
 
-const carMarkerWest = new Icon({
-  iconUrl: require('../../Images/car_west.png'),
-  iconSize: [30, 18],
-});
-const carMarkerEast = new Icon({
+const carMarker = new Icon({
   iconUrl: require('../../Images/car_east.png'),
   iconSize: [30, 18],
 });
-const carMarkerNorthWest = new Icon({
-  iconUrl: require('../../Images/car_north_west.png'),
-  iconSize: [35, 32],
-});
 
-const getCarMarker = (direction) => {
-  if (direction === 'east') return carMarkerEast;
-  if (direction === 'west') return carMarkerWest;
-  if (direction === 'northwest') return carMarkerNorthWest;
-};
+
 
 const CarIcon = (props) => {
+  const [lat, lon] = props.position
+  const [prevPos, setPrevPos] = useState([lat, lon])
+  
+  useEffect(() => {
+    if (prevPos[1] !== lon && prevPos[0] !== lat) setPrevPos([lat, lon]);
+  }, [lat, lon, prevPos]);
+  
   return (
-    <ReactLeafletDriftMarker
-      position={props.position}
+    <LeafletTrackingMarker 
+      position={[lat, lon]}
+      previousPosition={prevPos}
       duration={props.duration}
-      icon={getCarMarker(props.direction)}
+      icon={carMarker}
       data={props.data}
       eventHandlers={{
         click: (e) => {
@@ -38,7 +35,7 @@ const CarIcon = (props) => {
       <Popup>
         <p>{props.message}</p>
       </Popup>
-    </ReactLeafletDriftMarker>
+    </LeafletTrackingMarker>
   );
 };
 

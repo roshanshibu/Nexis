@@ -21,16 +21,12 @@ const srhMarkerIcon = new Icon({
 });
 
 const Home = () => {
-  const [car1Position, setCar1Position] = useState([49.409684, 8.660309]);
-  const [car1Direction, setCar1Direction] = useState('east');
-
-  const [car2Position, setCar2Position] = useState([49.404036, 8.677261]);
-  const [car2Direction, setCar2Direction] = useState('west');
 
   const [showAvailablePaths, setShowAvailablePaths] = useState(true);
   const [availablePaths, setAvailablePaths] = useState(null);
 
   const [socket, setSocket] = useState(null)
+  const [cars, setCars] = useState(null)
 
 	useEffect(() => {
 		if(socket === null)
@@ -45,6 +41,7 @@ const Home = () => {
 
 			socket.on('location', (data) => {
 				console.log(data)
+				setCars(data)
 			})
 		}
 		
@@ -84,27 +81,19 @@ const Home = () => {
 					eventHandlers={{
 					click: (e) => {
 						console.log(e.target.options.data);  // console log contents of data
-						setCar1Position([49.410270, 8.657739])
-						setCar1Direction("northwest")
-						setCar2Position([49.402713, 8.678520])
 					},
 					}}>
 						<Popup><p>I go here!</p></Popup>
 				</Marker>
-				<CarIcon 
-					position={car1Position} 
-					duration={1000}
-					direction={car1Direction} 
-					data={{hi:"there"}} 
-					message={"box to overtake"}/>
-				
-				
-				<CarIcon 
-					position={car2Position} 
-					duration={1000}
-					direction={car2Direction} 
-					data={{hi:"there"}} 
-					message={"box to overtake"}/>
+				{cars &&
+					Object.entries(cars).map(([carName, carProps]) => {
+						return (<CarIcon 
+							position={carProps.slice(0,2).map(loc => +loc)}
+							duration={1000}
+							data={{hi:"there"}} 
+							message={carName}/>)
+					})
+				}
 
         {showAvailablePaths &&
           availablePaths &&
