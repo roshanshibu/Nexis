@@ -37,7 +37,13 @@
 .leaflet-container {
     height: 65vh;
     border-radius: 20px;
+    border: 3px solid #04576e;
+    background: #001521;
   }
+/* .leaflet-tile { border: #030C11 solid; } */
+/* .leaflet-tile { border: #343332 solid 0.1px } */
+.leaflet-tile { border: #001521 solid 0.1px }
+
 .leaflet-top{
   display: none;
 }
