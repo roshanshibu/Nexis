@@ -23,7 +23,7 @@ const srhMarkerIcon = new Icon({
 
 const Home = () => {
 
-  const [showAvailablePaths, setShowAvailablePaths] = useState(true);
+  const [showAvailablePaths, setShowAvailablePaths] = useState(false);
   const [availablePaths, setAvailablePaths] = useState(null);
   const [showAvailableLandmarks, setShowAvailableLandmarks] = useState(true);
   const [availableLandmarks, setAvailableLandmarks] = useState(null);
