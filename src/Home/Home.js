@@ -5,6 +5,7 @@ import {
   TileLayer,
   Popup,
   Polyline,
+  CircleMarker,
 } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import './Home.css';
@@ -12,7 +13,7 @@ import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
 import CarIcon from './CarIcon/CarIcon';
 import Avatar from '../Images/avatar.jpeg';
 import { getAllPaths } from '../API/Paths';
-
+import { getAllLandmarks } from '../API/Landmarks';
 import io from 'socket.io-client';
 
 const srhMarkerIcon = new Icon({
@@ -24,6 +25,8 @@ const Home = () => {
 
   const [showAvailablePaths, setShowAvailablePaths] = useState(true);
   const [availablePaths, setAvailablePaths] = useState(null);
+  const [showAvailableLandmarks, setShowAvailableLandmarks] = useState(true);
+  const [availableLandmarks, setAvailableLandmarks] = useState(null);
 
   const [socket, setSocket] = useState(null)
   const [cars, setCars] = useState(null)
@@ -51,6 +54,13 @@ const Home = () => {
 				setAvailablePaths(response);
 			}
 		});
+
+    getAllLandmarks().then((response) => {
+      console.log(response);
+      if (showAvailableLandmarks) {
+        setAvailableLandmarks(response);
+      }
+    });
 	}, [socket])
     return (
 		<div className="homeContainer">
@@ -115,6 +125,34 @@ const Home = () => {
               />
             );
           })}
+
+        {showAvailableLandmarks &&
+          Array.isArray(availableLandmarks) &&
+          availableLandmarks.map((landmark) => (
+            <Marker
+              key={landmark.icon}
+              position={[
+                landmark.location.coordinates[1],
+                landmark.location.coordinates[0],
+              ]}
+            >
+              <CircleMarker
+                center={[
+                  landmark.location.coordinates[1],
+                  landmark.location.coordinates[0],
+                ]}
+                radius={5}
+                color="blue"
+                fillColor="blue"
+                fillOpacity={1}
+              />
+              <Popup>
+                <div>
+                  <h2>{landmark.icon}</h2> <p>{landmark.location.type}</p>{' '}
+                </div>
+              </Popup>
+            </Marker>
+          ))}
       </MapContainer>
     </div>
   );
