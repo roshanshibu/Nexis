@@ -1,48 +1,165 @@
+:root {
+  --accent-bg-color: #EBEBEA;
+}
+
 .homeContainer{
   display: flex;
   flex-direction: column;
-  background-color: #001520;
   height: 100vh;
-  padding: 0px 90px 0px 90px;
 }
 
-.f{
-  color: white;
-  line-height: 0;
-  margin: 0.6em;
-}
-.fSmall{
-  font-size: 15px;
-}
-.fMedium{
-  font-size: 20px;
-}
-.fLight{
-  font-weight: 100;
-}
-
-.userDetailsRow{
+.topBar{
   display: flex;
-  flex-direction: row;
-  align-self: self-end;
-  text-align: right;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 30px;
+  padding: 5px 40px;
+}
+.branding{
+  width: 500px;
+}
+.topBarIcons{
+  display: flex;
+  gap: 40px;
+}
+.topBarIcon{
+  width: 28px;
 }
 .avatar{
   width: 40px;
   border-radius: 60px;
 }
 
+.menu{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  left: 40px; top: 120px;
+  background: white;
+  border-radius: 18px;
+  border: solid 1px #E4E4E4;
+  box-shadow: 0px 0px 20px 0px rgb(0 0 0 / 10%);
+  padding: 15px;
+  z-index: 1;
+}
+.fromToContainer{
+  display: flex;
+  flex-direction: column;
+  background: #EFFAFF;
+  border-radius: 15px;
+  padding: 15px 10px;
+  margin-bottom: 20px;
+}
+
+.fromTo{
+  display: flex;
+  gap: 20px;
+  padding: 0px 10px;
+}
+.fromToIcon{
+  width: 30px;
+}
+.menuInput{
+  border-radius: 10px;
+  border: 2px solid #D6D6D6;
+  font-size: 20px;
+  font-weight: 500;
+  padding: 0px 15px;
+  width: 100%;
+} 
+input:focus{
+  outline: none;
+} 
+.closeIcon{
+  width: 40px;
+}
+.vertical_dotted_line
+{
+    border-left: 5px dotted #D7D7D7;
+    height: 45px;
+    margin-left: 22px;
+} 
+
+.otherMenuItems{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 90%;
+}
+.menuItem{
+  display: flex;
+  gap: 30px;
+}
+
+.menuItemIcon{
+  width: 40px;
+}
+
+.binaryRadio{
+  background: #D9D9D9;
+	border-radius: 10px;
+	position: relative;
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+.binaryRadio input {
+  align-self: center;
+  width: 100%;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	outline: none;
+	cursor: pointer;
+	padding: 10px 15px;
+	background: #D9D9D9;
+	color: #8F8F8F;
+	font-size: 14px;
+	transition: all 100ms linear;
+  margin: 2px;
+  font-size: 18px;
+  font-weight: 500;
+}
+.binaryRadio input:checked {
+	background: white;
+	color: #464646;
+}
+.binaryRadio input:before {
+	content: attr(label);
+}
+
+.leftInput{
+  border-radius: 8px 0px 0px 8px;
+}
+.rightInput{
+  border-radius: 0px 8px 8px 0px;
+  text-align: right;
+}
+
+.findCarButton{
+  display: flex;
+  background: #00A7FF;
+  border-radius: 10px;
+  border: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: white;
+  font-size: 18px;
+  line-height: 0;
+  padding: 10px;
+  gap: 10px;
+}
+
 .leaflet-container {
-    height: 65vh;
-    border-radius: 20px;
-    border: 3px solid #04576e;
-    background: #001521;
+    height: 100%;
+    background: var(--accent-bg-color);
+    z-index: 0;
   }
 /* .leaflet-tile { border: #030C11 solid; } */
 /* .leaflet-tile { border: #343332 solid 0.1px } */
-.leaflet-tile { border: #001521 solid 0.1px }
+/* .leaflet-tile { border: #001521 solid 0.1px } */
+/* .leaflet-tile { border: var(--accent-bg-color) solid 0.1px } */
 
 .leaflet-top{
   display: none;

@@ -12,6 +12,15 @@ import './Home.css';
 import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
 import CarIcon from './CarIcon/CarIcon';
 import Avatar from '../Images/avatar.jpeg';
+import Branding from '../Images/DummyBranding.svg'
+import MessagesIcon from '../Images/MessagesIcon.svg'
+import SettingsIcon from '../Images/SettingsIcon.svg'
+import FromC from '../Images/FromC.svg'
+import ToC from '../Images/ToC.svg'
+import CloseIcon from '../Images/close.svg'
+import CarMenuIcon from '../Images/CarMenuIcon.svg'
+import PersonIcon from '../Images/PersonIcon.svg'
+import SearchIcon from '../Images/SeachIcon.svg'
 import { getAllPaths } from '../API/Paths';
 import { getAllLandmarks } from '../API/Landmarks';
 import io from 'socket.io-client';
@@ -64,16 +73,49 @@ const Home = () => {
 	}, [socket])
     return (
 		<div className="homeContainer">
-			<div className="userDetailsRow">
-				<div style={{display: "flex", flexDirection: "column"}}>
-					<p className="f fSmall fLight">Good Morning</p>
-					<p className="f fMedium fLight">Harold</p>
+			<div className="topBar">
+				<img className='branding' src={Branding} />
+				<div className='topBarIcons'>
+					<img className="topBarIcon" src={MessagesIcon} />
+					<img className="topBarIcon" src={SettingsIcon} />
+					<img className="avatar" src={Avatar} />
 				</div>
-				<img className="avatar" src={Avatar} />
 			</div>
-			<div className="topRow">
-				<p>Top Row</p>
+
+			<div className='menu'>
+				<div className='fromToContainer'>
+					<div className='fromTo'>
+						<img className='fromToIcon' src={FromC} />
+						<input className='menuInput' type='text' style={{width: "180px"}}></input>
+						<img className='closeIcon' src={CloseIcon} />
+					</div>
+					<div class="vertical_dotted_line"></div>
+					<div className='fromTo'>
+						<img className='fromToIcon' src={ToC} />
+						<input className='menuInput'type='text' style={{width: "180px"}}></input>
+						<img className='closeIcon' src={CloseIcon} />
+					</div>
+				</div>
+				<div className='otherMenuItems'>
+					<div className='menuItem'>
+						<img src={PersonIcon} className='menuItemIcon' />
+						<input className='menuInput' type='number' />
+					</div>
+					<div className='menuItem'>
+						<img src={CarMenuIcon} className='menuItemIcon' />
+						<div className='binaryRadio'>
+							<input className='leftInput' label="Private" type="radio" id="private" name="rideMode" value="private" checked />
+							<input className='rightInput' label="Carpool" type="radio" id="carpool" name="rideMode" value="carpool" />
+						</div>
+					</div>
+					<button className='findCarButton'>
+						<img className='searchIcon' src={SearchIcon} />
+						<p>Find Car</p>
+					</button>
+				</div>
 			</div>
+
+
 			<MapContainer center={[49.4043, 8.6758]} zoom={14}>
 				<TileLayer
 				attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
@@ -86,12 +128,11 @@ const Home = () => {
 				// url="https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png"
 				//Cutsom dark blue
 				// url = "https://tile.jawg.io/d21f157e-c94e-45e9-afe3-8e7b539bacad/{z}/{x}/{y}{r}.png?access-token=gWBPzGuJidPXXTOmROY31sisVp5DytCMjZG4s1tvqJSb9nxrT8SsqmWzn45OOsu8"
-				//Custom - modified default dark
-				// url ="https://tile.jawg.io/12b8cba4-7e48-46c9-b661-ce1fca768e74/{z}/{x}/{y}{r}.png?access-token=gWBPzGuJidPXXTOmROY31sisVp5DytCMjZG4s1tvqJSb9nxrT8SsqmWzn45OOsu8"
-				// url = "https://{s}.api.tomtom.com/map/1/tile/basic/main/{z}/{x}/{y}.png?key=GLgOsquuX16nBmjiE7HEGkrGcJPXt8eB"
+				//Cutsom white
+				url = "https://tile.jawg.io/64cfd245-d159-424f-9d31-05a6b4135f51/{z}/{x}/{y}{r}.png?access-token=gWBPzGuJidPXXTOmROY31sisVp5DytCMjZG4s1tvqJSb9nxrT8SsqmWzn45OOsu8"
 				//mapbox
 				// url="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiemF3b2xmIiwiYSI6ImNsaWVyMjZuZjBqbHUzZnFqNXFmYnAwbWMifQ.ffjLLlGHsA4MMnE8_BYv7g"
-				url="https://api.mapbox.com/styles/v1/zawolf/clieu5urg002g01pghny7clln/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiemF3b2xmIiwiYSI6ImNsaWVyMjZuZjBqbHUzZnFqNXFmYnAwbWMifQ.ffjLLlGHsA4MMnE8_BYv7g"
+				// url="https://api.mapbox.com/styles/v1/zawolf/clieu5urg002g01pghny7clln/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiemF3b2xmIiwiYSI6ImNsaWVyMjZuZjBqbHUzZnFqNXFmYnAwbWMifQ.ffjLLlGHsA4MMnE8_BYv7g"
 				/>
 				<Marker
 					position={[49.4139, 8.6511]}
@@ -153,8 +194,8 @@ const Home = () => {
               </Popup>
             </Marker>
           ))}
-      </MapContainer>
-    </div>
+      		</MapContainer>
+    	</div>
   );
 };
 
