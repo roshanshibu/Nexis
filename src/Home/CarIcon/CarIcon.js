@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 const carMarker = new Icon({
   iconUrl: require('../../Images/car_east.png'),
-  iconSize: [30, 18],
+  iconSize: [35, 23],
 });
 
 

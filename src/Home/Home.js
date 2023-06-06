@@ -24,6 +24,7 @@ import SearchIcon from '../Images/SeachIcon.svg'
 import { getAllPaths } from '../API/Paths';
 import { getAllLandmarks } from '../API/Landmarks';
 import io from 'socket.io-client';
+import LocationIcon from './LocationIcon/LocationIcon';
 
 const srhMarkerIcon = new Icon({
   iconUrl: require('../Images/SRH_Icon.png'),
@@ -31,14 +32,22 @@ const srhMarkerIcon = new Icon({
 });
 
 const Home = () => {
+	const CarMode = {
+		Private: 0,
+		Carpool: 1
+	}
 
-  const [showAvailablePaths, setShowAvailablePaths] = useState(false);
-  const [availablePaths, setAvailablePaths] = useState(null);
-  const [showAvailableLandmarks, setShowAvailableLandmarks] = useState(true);
-  const [availableLandmarks, setAvailableLandmarks] = useState(null);
+	const [showAvailablePaths, setShowAvailablePaths] = useState(false);
+	const [availablePaths, setAvailablePaths] = useState(null);
+	const [availableLandmarks, setAvailableLandmarks] = useState(null);
 
-  const [socket, setSocket] = useState(null)
-  const [cars, setCars] = useState(null)
+	const [fromLocation, setFromLocation] = useState(null);
+	const [toLocation, setToLocation] = useState(null);
+	const [commuterCount, setCommuterCount] = useState(0);
+	const [carMode, setCarMode] = useState(CarMode.Private)
+
+	const [socket, setSocket] = useState(null)
+	const [cars, setCars] = useState(null)
 
 	useEffect(() => {
 		if(socket === null)
@@ -57,21 +66,19 @@ const Home = () => {
 			})
 		}
 		
-		getAllPaths().then(response => {
-			console.log(response)
-			if (showAvailablePaths){
-				setAvailablePaths(response);
-			}
-		});
+		// getAllPaths().then(response => {
+		// 	console.log(response)
+		// 	if (showAvailablePaths){
+		// 		setAvailablePaths(response);
+		// 	}
+		// });
 
-    getAllLandmarks().then((response) => {
-      console.log(response);
-      if (showAvailableLandmarks) {
-        setAvailableLandmarks(response);
-      }
-    });
+		getAllLandmarks().then((response) => {
+		console.log(response);
+			setAvailableLandmarks(response);
+		});
 	}, [socket])
-    return (
+	return (
 		<div className="homeContainer">
 			<div className="topBar">
 				<img className='branding' src={Branding} />
@@ -86,14 +93,14 @@ const Home = () => {
 				<div className='fromToContainer'>
 					<div className='fromTo'>
 						<img className='fromToIcon' src={FromC} />
-						<input className='menuInput' type='text' style={{width: "180px"}}></input>
-						<img className='closeIcon' src={CloseIcon} />
+						<input className='menuInput' type='text' style={{width: "180px"}} value={fromLocation? fromLocation.name : ""}></input>
+						<img className='closeIcon' src={CloseIcon} onClick={() => setFromLocation(null)}/>
 					</div>
 					<div class="vertical_dotted_line"></div>
 					<div className='fromTo'>
 						<img className='fromToIcon' src={ToC} />
-						<input className='menuInput'type='text' style={{width: "180px"}}></input>
-						<img className='closeIcon' src={CloseIcon} />
+						<input className='menuInput'type='text' style={{width: "180px"}} value={toLocation? toLocation.name : ""}></input>
+						<img className='closeIcon' src={CloseIcon} onClick={() => setToLocation(null)} />
 					</div>
 				</div>
 				<div className='otherMenuItems'>
@@ -155,48 +162,33 @@ const Home = () => {
 					})
 				}
 
-        {showAvailablePaths &&
-          availablePaths &&
-          availablePaths.map((path) => {
-            return (
-              <Polyline
-                positions={path}
-                color={'#00a3ff66'}
-                key={path[0][0] + path[path.length - 1][0]}
-              />
-            );
-          })}
+				{showAvailablePaths &&
+				availablePaths &&
+				availablePaths.map((path) => {
+					return (
+					<Polyline
+						positions={path}
+						color={'#00a3ff66'}
+						key={path[0][0] + path[path.length - 1][0]}
+					/>
+					);
+				})}
 
-        {showAvailableLandmarks &&
-          Array.isArray(availableLandmarks) &&
-          availableLandmarks.map((landmark) => (
-            <Marker
-              key={landmark.icon}
-              position={[
-                landmark.location.coordinates[1],
-                landmark.location.coordinates[0],
-              ]}
-            >
-              <CircleMarker
-                center={[
-                  landmark.location.coordinates[1],
-                  landmark.location.coordinates[0],
-                ]}
-                radius={5}
-                color="blue"
-                fillColor="blue"
-                fillOpacity={1}
-              />
-              <Popup>
-                <div>
-                  <h2>{landmark.icon}</h2> <p>{landmark.location.type}</p>{' '}
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-      		</MapContainer>
-    	</div>
-  );
+				{
+					availableLandmarks &&
+					availableLandmarks.map((landmark) => (
+						<LocationIcon 
+							landmark={landmark}
+							fromLocation={fromLocation}
+							setFromLocation={setFromLocation}
+							toLocation={toLocation}
+							setToLocation={setToLocation}
+							/>
+					))
+				}
+			</MapContainer>
+		</div>
+	);
 };
 
 export default Home;
