@@ -38,7 +38,7 @@ const LocationIcon = (props) => {
             fillColor="blue"
             fillOpacity={1}
         /> */}
-        <Popup>
+        {/* <Popup>
             <div>
                 <h2>
                     {props.landmark.location.name}
@@ -47,7 +47,7 @@ const LocationIcon = (props) => {
                     {props.landmark.location.type}
                 </p>
             </div>
-        </Popup>
+        </Popup> */}
     </Marker>
     );
 };
