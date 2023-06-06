@@ -142,6 +142,7 @@ input:focus{
   background: #00A7FF;
   border-radius: 10px;
   border: none;
+  cursor: pointer;
   align-items: center;
   justify-content: center;
   width: 100%;

@@ -21,7 +21,7 @@ import CloseIcon from '../Images/close.svg'
 import CarMenuIcon from '../Images/CarMenuIcon.svg'
 import PersonIcon from '../Images/PersonIcon.svg'
 import SearchIcon from '../Images/SeachIcon.svg'
-import { getAllPaths } from '../API/Paths';
+import { getAllPaths, getShortestPath } from '../API/Paths';
 import { getAllLandmarks } from '../API/Landmarks';
 import io from 'socket.io-client';
 import LocationIcon from './LocationIcon/LocationIcon';
@@ -46,6 +46,8 @@ const Home = () => {
 	const [commuterCount, setCommuterCount] = useState(0);
 	const [carMode, setCarMode] = useState(CarMode.Private)
 
+	const [highlightPath, setHighlightPath] = useState(null);
+
 	const [socket, setSocket] = useState(null)
 	const [cars, setCars] = useState(null)
 
@@ -66,18 +68,20 @@ const Home = () => {
 			})
 		}
 		
-		// getAllPaths().then(response => {
-		// 	console.log(response)
-		// 	if (showAvailablePaths){
-		// 		setAvailablePaths(response);
-		// 	}
-		// });
-
 		getAllLandmarks().then((response) => {
 		console.log(response);
 			setAvailableLandmarks(response);
 		});
 	}, [socket])
+
+	const getPathBetween = (fromLoc, toLoc) => {
+		getShortestPath(fromLoc.coordinates, toLoc.coordinates)
+			.then((response) => {
+									console.log(response);
+									setHighlightPath(response);
+								}
+			);
+	}
 	return (
 		<div className="homeContainer">
 			<div className="topBar">
@@ -93,13 +97,13 @@ const Home = () => {
 				<div className='fromToContainer'>
 					<div className='fromTo'>
 						<img className='fromToIcon' src={FromC} />
-						<input className='menuInput' type='text' style={{width: "180px"}} value={fromLocation? fromLocation.name : ""}></input>
+						<input className='menuInput' type='text' style={{width: "180px"}} value={fromLocation? fromLocation.name : ""} readOnly></input>
 						<img className='closeIcon' src={CloseIcon} onClick={() => setFromLocation(null)}/>
 					</div>
-					<div class="vertical_dotted_line"></div>
+					<div className="vertical_dotted_line"></div>
 					<div className='fromTo'>
 						<img className='fromToIcon' src={ToC} />
-						<input className='menuInput'type='text' style={{width: "180px"}} value={toLocation? toLocation.name : ""}></input>
+						<input className='menuInput'type='text' style={{width: "180px"}} value={toLocation? toLocation.name : ""} readOnly></input>
 						<img className='closeIcon' src={CloseIcon} onClick={() => setToLocation(null)} />
 					</div>
 				</div>
@@ -111,11 +115,11 @@ const Home = () => {
 					<div className='menuItem'>
 						<img src={CarMenuIcon} className='menuItemIcon' />
 						<div className='binaryRadio'>
-							<input className='leftInput' label="Private" type="radio" id="private" name="rideMode" value="private" checked />
+							<input className='leftInput' label="Private" type="radio" id="private" name="rideMode" value="private" defaultChecked />
 							<input className='rightInput' label="Carpool" type="radio" id="carpool" name="rideMode" value="carpool" />
 						</div>
 					</div>
-					<button className='findCarButton'>
+					<button className='findCarButton' onClick={() => getPathBetween(fromLocation, toLocation)}>
 						<img className='searchIcon' src={SearchIcon} />
 						<p>Find Car</p>
 					</button>
@@ -141,17 +145,7 @@ const Home = () => {
 				// url="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiemF3b2xmIiwiYSI6ImNsaWVyMjZuZjBqbHUzZnFqNXFmYnAwbWMifQ.ffjLLlGHsA4MMnE8_BYv7g"
 				// url="https://api.mapbox.com/styles/v1/zawolf/clieu5urg002g01pghny7clln/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiemF3b2xmIiwiYSI6ImNsaWVyMjZuZjBqbHUzZnFqNXFmYnAwbWMifQ.ffjLLlGHsA4MMnE8_BYv7g"
 				/>
-				<Marker
-					position={[49.4139, 8.6511]}
-					icon={srhMarkerIcon}
-					data={{key: "value"}}
-					eventHandlers={{
-					click: (e) => {
-						console.log(e.target.options.data);  // console log contents of data
-					},
-					}}>
-						<Popup><p>I go here!</p></Popup>
-				</Marker>
+
 				{cars &&
 					Object.entries(cars).map(([carName, carProps]) => {
 						return (<CarIcon 
@@ -183,8 +177,20 @@ const Home = () => {
 							setFromLocation={setFromLocation}
 							toLocation={toLocation}
 							setToLocation={setToLocation}
+							key={landmark.location.name}
 							/>
 					))
+				}
+
+				{
+					highlightPath?
+						<Polyline
+							positions={highlightPath}
+							// dashArray={[5, 10]}
+							color={'#00a7ff'}
+						/>
+					:
+						<></>
 				}
 			</MapContainer>
 		</div>

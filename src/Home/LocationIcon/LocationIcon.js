@@ -17,11 +17,13 @@ const LocationIcon = (props) => {
         data={props.landmark.location}
         eventHandlers={{
             click: (e) => {
-                console.log(e.target.options.data);
+                console.log(props.landmark)
                 if(!props.fromLocation){
-                    props.setFromLocation(e.target.options.data)
+                    if (JSON.stringify(props.toLocation) !== JSON.stringify(e.target.options.data))
+                        props.setFromLocation(e.target.options.data)
                 }else{
-                    props.setToLocation(e.target.options.data)
+                    if (JSON.stringify(props.fromLocation) !== JSON.stringify(e.target.options.data))
+                        props.setToLocation(e.target.options.data)
                 }
             },
         }}
@@ -39,7 +41,7 @@ const LocationIcon = (props) => {
         <Popup>
             <div>
                 <h2>
-                    {props.landmark.icon}
+                    {props.landmark.location.name}
                 </h2> 
                 <p>
                     {props.landmark.location.type}
