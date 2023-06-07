@@ -21,6 +21,7 @@ import CloseIcon from '../Images/close.svg'
 import CarMenuIcon from '../Images/CarMenuIcon.svg'
 import PersonIcon from '../Images/PersonIcon.svg'
 import SearchIcon from '../Images/SeachIcon.svg'
+import RadarLoader from '../Images/radar.svg'
 import { getAllPaths, getShortestPath } from '../API/Paths';
 import { getAllLandmarks } from '../API/Landmarks';
 import io from 'socket.io-client';
@@ -38,9 +39,9 @@ const Home = () => {
 		Carpool: 1
 	}
 
-	const [showAvailablePaths, setShowAvailablePaths] = useState(false);
-	const [availablePaths, setAvailablePaths] = useState(null);
 	const [availableLandmarks, setAvailableLandmarks] = useState(null);
+
+	const [menuState, setMenuSate] = useState('start')
 
 	const [fromLocation, setFromLocation] = useState(null);
 	const [toLocation, setToLocation] = useState(null);
@@ -48,6 +49,7 @@ const Home = () => {
 	const [carMode, setCarMode] = useState(CarMode.Private)
 
 	const [highlightPath, setHighlightPath] = useState(null);
+	const [findingCarInfoText, setFindingCarInfoText] = useState("")
 
 	const [socket, setSocket] = useState(null)
 	const [cars, setCars] = useState(null)
@@ -77,20 +79,23 @@ const Home = () => {
 
 
 	const findCar = () => {
+		setMenuSate('findingCar')
+		setFindingCarInfoText("Computing shortest path...")
 		// compute and display the shortest path 
 		getShortestPath(fromLocation.coordinates, toLocation.coordinates)
 		.then((response) => {
 								console.log(response);
 								setHighlightPath(response);
+								setFindingCarInfoText("Finding nearest car...")
+								// get the nearest available car details
+								getNearestAvailableCar(fromLocation.coordinates, carMode)
+								.then((response) => {
+									console.log("nearest car:", response);
+									setFindingCarInfoText(`Contacting car ${response.key}...`)								
+									}
+								);
 							}
 		);
-
-		// get the nearest available car details
-		getNearestAvailableCar(fromLocation.coordinates, carMode)
-		.then((response) => {
-			console.log("nearest car:", response);
-		}
-);
 	}
 
 	return (
@@ -105,36 +110,48 @@ const Home = () => {
 			</div>
 
 			<div className='menu'>
-				<div className='fromToContainer'>
-					<div className='fromTo'>
-						<img className='fromToIcon' src={FromC} />
-						<input className='menuInput' type='text' style={{width: "180px"}} value={fromLocation? fromLocation.name : ""} readOnly></input>
-						<img className='closeIcon' src={CloseIcon} onClick={() => setFromLocation(null)}/>
-					</div>
-					<div className="vertical_dotted_line"></div>
-					<div className='fromTo'>
-						<img className='fromToIcon' src={ToC} />
-						<input className='menuInput'type='text' style={{width: "180px"}} value={toLocation? toLocation.name : ""} readOnly></input>
-						<img className='closeIcon' src={CloseIcon} onClick={() => setToLocation(null)} />
-					</div>
-				</div>
-				<div className='otherMenuItems'>
-					<div className='menuItem'>
-						<img src={PersonIcon} className='menuItemIcon' />
-						<input className='menuInput' type='number' />
-					</div>
-					<div className='menuItem'>
-						<img src={CarMenuIcon} className='menuItemIcon' />
-						<div className='binaryRadio'>
-							<input className='leftInput' label="Private" type="radio" id="private" name="rideMode" value="private" defaultChecked />
-							<input className='rightInput' label="Carpool" type="radio" id="carpool" name="rideMode" value="carpool" />
+				{
+					menuState==='start' &&
+					<>
+						<div className='fromToContainer'>
+							<div className='fromTo'>
+								<img className='fromToIcon' src={FromC} />
+								<input className='menuInput' type='text' style={{width: "180px"}} value={fromLocation? fromLocation.name : ""} readOnly></input>
+								<img className='closeIcon' src={CloseIcon} onClick={() => setFromLocation(null)}/>
+							</div>
+							<div className="vertical_dotted_line"></div>
+							<div className='fromTo'>
+								<img className='fromToIcon' src={ToC} />
+								<input className='menuInput'type='text' style={{width: "180px"}} value={toLocation? toLocation.name : ""} readOnly></input>
+								<img className='closeIcon' src={CloseIcon} onClick={() => setToLocation(null)} />
+							</div>
 						</div>
+						<div className='otherMenuItems'>
+							<div className='menuItem'>
+								<img src={PersonIcon} className='menuItemIcon' />
+								<input className='menuInput' type='number' />
+							</div>
+							<div className='menuItem'>
+								<img src={CarMenuIcon} className='menuItemIcon' />
+								<div className='binaryRadio'>
+									<input className='leftInput' label="Private" type="radio" id="private" name="rideMode" value="private" defaultChecked />
+									<input className='rightInput' label="Carpool" type="radio" id="carpool" name="rideMode" value="carpool" />
+								</div>
+							</div>
+							<button className='findCarButton' onClick={() => findCar()}>
+								<img className='searchIcon' src={SearchIcon} />
+								<p>Find Car</p>
+							</button>
+						</div>
+					</>
+				}
+				{
+					menuState==='findingCar' &&
+					<div>
+						<img className='radar' src={RadarLoader} />
+						<p style={{textAlign: "center"}}>{findingCarInfoText}</p>
 					</div>
-					<button className='findCarButton' onClick={() => findCar()}>
-						<img className='searchIcon' src={SearchIcon} />
-						<p>Find Car</p>
-					</button>
-				</div>
+				}
 			</div>
 
 
@@ -167,18 +184,6 @@ const Home = () => {
 							message={carName}/>)
 					})
 				}
-
-				{showAvailablePaths &&
-				availablePaths &&
-				availablePaths.map((path) => {
-					return (
-					<Polyline
-						positions={path}
-						color={'#00a3ff66'}
-						key={path[0][0] + path[path.length - 1][0]}
-					/>
-					);
-				})}
 
 				{
 					availableLandmarks &&
