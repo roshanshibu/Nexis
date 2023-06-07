@@ -32,9 +32,9 @@ const CarIcon = (props) => {
         },
       }}
     >
-      <Popup>
+      {/* <Popup>
         <p>{props.message}</p>
-      </Popup>
+      </Popup> */}
     </LeafletTrackingMarker>
   );
 };

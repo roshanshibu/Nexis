@@ -25,6 +25,7 @@ import { getAllPaths, getShortestPath } from '../API/Paths';
 import { getAllLandmarks } from '../API/Landmarks';
 import io from 'socket.io-client';
 import LocationIcon from './LocationIcon/LocationIcon';
+import { getNearestAvailableCar } from '../API/Cars';
 
 const srhMarkerIcon = new Icon({
   iconUrl: require('../Images/SRH_Icon.png'),
@@ -63,25 +64,35 @@ const Home = () => {
 			})
 
 			socket.on('location', (data) => {
-				console.log(data)
+				// console.log(data)
 				setCars(data)
 			})
 		}
 		
 		getAllLandmarks().then((response) => {
-		console.log(response);
+			// console.log(response);
 			setAvailableLandmarks(response);
 		});
 	}, [socket])
 
-	const getPathBetween = (fromLoc, toLoc) => {
-		getShortestPath(fromLoc.coordinates, toLoc.coordinates)
-			.then((response) => {
-									console.log(response);
-									setHighlightPath(response);
-								}
-			);
+
+	const findCar = () => {
+		// compute and display the shortest path 
+		getShortestPath(fromLocation.coordinates, toLocation.coordinates)
+		.then((response) => {
+								console.log(response);
+								setHighlightPath(response);
+							}
+		);
+
+		// get the nearest available car details
+		getNearestAvailableCar(fromLocation.coordinates, carMode)
+		.then((response) => {
+			console.log("nearest car:", response);
+		}
+);
 	}
+
 	return (
 		<div className="homeContainer">
 			<div className="topBar">
@@ -119,7 +130,7 @@ const Home = () => {
 							<input className='rightInput' label="Carpool" type="radio" id="carpool" name="rideMode" value="carpool" />
 						</div>
 					</div>
-					<button className='findCarButton' onClick={() => getPathBetween(fromLocation, toLocation)}>
+					<button className='findCarButton' onClick={() => findCar()}>
 						<img className='searchIcon' src={SearchIcon} />
 						<p>Find Car</p>
 					</button>
@@ -151,7 +162,8 @@ const Home = () => {
 						return (<CarIcon 
 							position={carProps.slice(0,2).map(loc => +loc)}
 							duration={1000}
-							data={{hi:"there"}} 
+							key={carName}
+							data={{'carName':carName}} 
 							message={carName}/>)
 					})
 				}
