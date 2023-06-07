@@ -26,12 +26,7 @@ import { getAllPaths, getShortestPath } from '../API/Paths';
 import { getAllLandmarks } from '../API/Landmarks';
 import io from 'socket.io-client';
 import LocationIcon from './LocationIcon/LocationIcon';
-import { getNearestAvailableCar } from '../API/Cars';
-
-const srhMarkerIcon = new Icon({
-  iconUrl: require('../Images/SRH_Icon.png'),
-  iconSize: [45, 38],
-});
+import { getNearestAvailableCar, initiatePickup } from '../API/Cars';
 
 const Home = () => {
 	const CarMode = {
@@ -84,17 +79,22 @@ const Home = () => {
 		// compute and display the shortest path 
 		getShortestPath(fromLocation.coordinates, toLocation.coordinates)
 		.then((response) => {
-								console.log(response);
-								setHighlightPath(response);
-								setFindingCarInfoText("Finding nearest car...")
-								// get the nearest available car details
-								getNearestAvailableCar(fromLocation.coordinates, carMode)
-								.then((response) => {
-									console.log("nearest car:", response);
-									setFindingCarInfoText(`Contacting car ${response.key}...`)								
-									}
-								);
-							}
+			console.log(response);
+			setHighlightPath(response);
+			setFindingCarInfoText("Finding nearest car...")
+			// get the nearest available car details
+			getNearestAvailableCar(fromLocation.coordinates, carMode)
+			.then((response) => {
+				console.log("nearest car:", response);
+				setFindingCarInfoText(`Contacting car ${response.key}...`)
+				//initiate the pickup
+				initiatePickup(fromLocation.coordinates, response.key)
+				.then((response) => {
+					console.log("pickup initiated",response)
+				});							
+				}
+			);
+		}
 		);
 	}
 

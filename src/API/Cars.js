@@ -11,3 +11,15 @@ export function getNearestAvailableCar (startLoc, userMode) {
             console.log("Fetch error: ",error);
         });
 }
+
+export function initiatePickup (pickupLoc, carKey) {
+    return fetch(endpoint + "initiatePickup?"+ new URLSearchParams({
+            pickupLat: pickupLoc[0],
+            pickupLon: pickupLoc[1],
+            carKey: carKey,
+        }))
+        .then(response => response.json())
+        .catch(error => {
+            console.log("Fetch error: ",error);
+        });
+}
