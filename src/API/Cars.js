@@ -12,11 +12,14 @@ export function getNearestAvailableCar (startLoc, userMode) {
         });
 }
 
-export function initiatePickup (pickupLoc, carKey) {
+export function initiatePickup (pickupLoc, carKey, userId, personCount, carMode) {
     return fetch(endpoint + "initiatePickup?"+ new URLSearchParams({
             pickupLat: pickupLoc[0],
             pickupLon: pickupLoc[1],
             carKey: carKey,
+            userId: userId,
+            personCount: personCount,
+            carMode: carMode
         }))
         .then(response => response.json())
         .catch(error => {

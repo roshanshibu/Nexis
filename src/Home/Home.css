@@ -98,8 +98,21 @@ input:focus{
   width: 40px;
 }
 
-.personCount::after{
-  content : 'persons';
+.personCountInput{
+  height: 100%;
+  border-radius: 10px !important; 
+  border: 2px solid #D6D6D6 !important;
+  font-size: 18px !important;
+  width: 100%;
+  font-weight: 500;
+  caret-color: transparent;
+  padding-left: 15px !important;
+}
+.react-numeric-input b {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding-right: 15px !important;
 }
 .binaryRadio{
   background: #D9D9D9;

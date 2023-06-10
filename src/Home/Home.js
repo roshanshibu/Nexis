@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   MapContainer,
   Marker,
@@ -10,8 +10,8 @@ import {
 import { Icon } from 'leaflet';
 import './Home.css';
 import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
+import NumericInput from 'react-numeric-input';
 import CarIcon from './CarIcon/CarIcon';
-import Avatar from '../Images/avatar.jpeg';
 import Branding from '../Images/DummyBranding.svg'
 import MessagesIcon from '../Images/MessagesIcon.svg'
 import SettingsIcon from '../Images/SettingsIcon.svg'
@@ -27,24 +27,28 @@ import { getAllLandmarks } from '../API/Landmarks';
 import io from 'socket.io-client';
 import LocationIcon from './LocationIcon/LocationIcon';
 import { getNearestAvailableCar, initiatePickup } from '../API/Cars';
+import { UserContext } from '../App';
 
 const Home = () => {
 	const CarMode = {
-		Private: 0,
-		Carpool: 1
+		NORMAL: 1,
+		CARPOOL: 2
 	}
 
+	const [showAvailablePaths, setShowAvailablePaths] = useState(false);
+	const [availablePaths, setAvailablePaths] = useState(null);
 	const [availableLandmarks, setAvailableLandmarks] = useState(null);
 
 	const [menuState, setMenuSate] = useState('start')
 
 	const [fromLocation, setFromLocation] = useState(null);
 	const [toLocation, setToLocation] = useState(null);
-	const [commuterCount, setCommuterCount] = useState(0);
-	const [carMode, setCarMode] = useState(CarMode.Private)
+	const [commuterCount, setCommuterCount] = useState(1);
+	const [carMode, setCarMode] = useState(CarMode.NORMAL)
+	const [currentCarKey, setCurrentCarKey] = useState(null);
 
 	const [highlightPath, setHighlightPath] = useState(null);
-	const [findingCarInfoText, setFindingCarInfoText] = useState("")
+	const [subMenuText, setSubMenuText] = useState("")
 
 	const [socket, setSocket] = useState(null)
 	const [cars, setCars] = useState(null)
@@ -63,6 +67,19 @@ const Home = () => {
 			socket.on('location', (data) => {
 				// console.log(data)
 				setCars(data)
+				if(menuState=='findingCar'){
+					console.log("car key ->", currentCarKey)
+					if(currentCarKey){
+						// console.log(data[currentCarKey].map(Number), toLocation.coordinates)
+						// console.log(JSON.stringify(data[currentCarKey]))
+						if (data[currentCarKey][2] === "WAITING"){
+							console.log("car is waiting")
+							setMenuSate("waiting")
+						}
+					}else{
+						console.log("ERROR: current car key not available")
+					}
+				}
 			})
 		}
 		
@@ -70,25 +87,36 @@ const Home = () => {
 			// console.log(response);
 			setAvailableLandmarks(response);
 		});
-	}, [socket])
 
+		if(showAvailablePaths){
+			getAllPaths().then(response => {
+				console.log(response)
+				if (showAvailablePaths){
+					setAvailablePaths(response);
+				}
+			});
+		}
+	}, [socket, menuState, currentCarKey])
+
+	const userContext = useContext(UserContext);
 
 	const findCar = () => {
 		setMenuSate('findingCar')
-		setFindingCarInfoText("Computing shortest path...")
+		setSubMenuText("Computing shortest path...")
 		// compute and display the shortest path 
 		getShortestPath(fromLocation.coordinates, toLocation.coordinates)
 		.then((response) => {
 			console.log(response);
 			setHighlightPath(response);
-			setFindingCarInfoText("Finding nearest car...")
+			setSubMenuText("Finding nearest car...")
 			// get the nearest available car details
 			getNearestAvailableCar(fromLocation.coordinates, carMode)
 			.then((response) => {
 				console.log("nearest car:", response);
-				setFindingCarInfoText(`Contacting car ${response.key}...`)
+				setCurrentCarKey(response.key)
+				setSubMenuText(`Contacting car ${response.key}...`)
 				//initiate the pickup
-				initiatePickup(fromLocation.coordinates, response.key)
+				initiatePickup(fromLocation.coordinates, response.key, userContext.currentUserId, commuterCount, carMode)
 				.then((response) => {
 					console.log("pickup initiated",response)
 				});							
@@ -105,7 +133,13 @@ const Home = () => {
 				<div className='topBarIcons'>
 					<img className="topBarIcon" src={MessagesIcon} />
 					<img className="topBarIcon" src={SettingsIcon} />
-					<img className="avatar" src={Avatar} />
+					<img className="avatar" src={require(`./Avatar/avatar${userContext.currentUserId}.jpg`)}
+						onClick={() => {
+							if (userContext.currentUserId == 3)
+								userContext.setCurrentUserId(1)
+							else
+								userContext.setCurrentUserId(userContext.currentUserId + 1)
+						}} />
 				</div>
 			</div>
 
@@ -129,13 +163,19 @@ const Home = () => {
 						<div className='otherMenuItems'>
 							<div className='menuItem'>
 								<img src={PersonIcon} className='menuItemIcon' />
-								<input className='menuInput' type='number' />
+								<NumericInput className='personCountInput' min={1} max={100} defaultValue={1} 
+									format={(num) => {return num + (num==1?' person':' persons')}}
+									onChange={(newVal)=>{setCommuterCount(newVal)}}/>
 							</div>
 							<div className='menuItem'>
 								<img src={CarMenuIcon} className='menuItemIcon' />
 								<div className='binaryRadio'>
-									<input className='leftInput' label="Private" type="radio" id="private" name="rideMode" value="private" defaultChecked />
-									<input className='rightInput' label="Carpool" type="radio" id="carpool" name="rideMode" value="carpool" />
+									<input className='leftInput' label="Private" type="radio" 
+										id="private" name="rideMode" value="1" defaultChecked
+										onChange={(e)=> {setCarMode(CarMode.NORMAL)}} />
+									<input className='rightInput' label="Carpool" type="radio" 
+										id="carpool" name="rideMode" value="2"
+										onChange={(e)=> {setCarMode(CarMode.CARPOOL)}} />
 								</div>
 							</div>
 							<button className='findCarButton' onClick={() => findCar()}>
@@ -149,7 +189,13 @@ const Home = () => {
 					menuState==='findingCar' &&
 					<div>
 						<img className='radar' src={RadarLoader} />
-						<p style={{textAlign: "center"}}>{findingCarInfoText}</p>
+						<p style={{textAlign: "center"}}>{subMenuText}</p>
+					</div>
+				}
+				{
+					menuState==='waiting' &&
+					<div>
+						<p style={{textAlign: "center"}}>Waiting for user</p>
 					</div>
 				}
 			</div>
@@ -197,6 +243,17 @@ const Home = () => {
 							key={landmark.location.name}
 							/>
 					))
+				}
+
+				{
+					// show all available paths
+					// ONLY FOR TEST & DEBUG
+					// remove in production
+					showAvailablePaths &&
+					availablePaths &&
+					availablePaths.map((path) => {
+						return (<Polyline positions={path} color={'#00ff6d47'} key={path[0][0]+path[path.length-1][0]} />)
+					})
 				}
 
 				{
