@@ -1,10 +1,11 @@
 import { endpoint } from "./Common";
 
-export function getNearestAvailableCar (startLoc, userMode) {
+export function getNearestAvailableCar (startLoc, userMode, personCount) {
     return fetch(endpoint + "getNearestAvailableCar?"+ new URLSearchParams({
             userLat: startLoc[0],
             userLon: startLoc[1],
             userMode: userMode,
+            personCount: personCount,
         }))
         .then(response => response.json())
         .catch(error => {

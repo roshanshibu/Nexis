@@ -126,7 +126,7 @@ const Home = () => {
 			setHighlightPath(response);
 			setSubMenuText("Finding nearest car...")
 			// get the nearest available car details
-			getNearestAvailableCar(fromLocation.coordinates, carMode)
+			getNearestAvailableCar(fromLocation.coordinates, carMode, commuterCount)
 			.then((response) => {
 				console.log("nearest car:", response);
 				setCurrentCarKey(response.key)
