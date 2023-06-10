@@ -26,3 +26,17 @@ export function initiatePickup (pickupLoc, carKey, userId, personCount, carMode)
             console.log("Fetch error: ",error);
         });
 }
+
+export function initiateTransit (pickupLoc, destinationLoc, carKey) {
+    return fetch(endpoint + "initiateTransit?"+ new URLSearchParams({
+            pickupLat: pickupLoc[0],
+            pickupLon: pickupLoc[1],
+            destinationLat: destinationLoc[0],
+            destinationLon: destinationLoc[1],
+            carKey: carKey
+        }))
+        .then(response => response.json())
+        .catch(error => {
+            console.log("Fetch error: ",error);
+        });
+}

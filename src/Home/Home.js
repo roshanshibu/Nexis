@@ -26,7 +26,7 @@ import { getAllPaths, getShortestPath } from '../API/Paths';
 import { getAllLandmarks } from '../API/Landmarks';
 import io from 'socket.io-client';
 import LocationIcon from './LocationIcon/LocationIcon';
-import { getNearestAvailableCar, initiatePickup } from '../API/Cars';
+import { getNearestAvailableCar, initiatePickup, initiateTransit } from '../API/Cars';
 import { UserContext } from '../App';
 
 const Home = () => {
@@ -39,7 +39,7 @@ const Home = () => {
 	const [availablePaths, setAvailablePaths] = useState(null);
 	const [availableLandmarks, setAvailableLandmarks] = useState(null);
 
-	const [menuState, setMenuSate] = useState('start')
+	const [menuState, setMenuSate] = useState('IDLE')
 
 	const [fromLocation, setFromLocation] = useState(null);
 	const [toLocation, setToLocation] = useState(null);
@@ -67,19 +67,35 @@ const Home = () => {
 			socket.on('location', (data) => {
 				// console.log(data)
 				setCars(data)
-				if(menuState=='findingCar'){
-					console.log("car key ->", currentCarKey)
-					if(currentCarKey){
-						// console.log(data[currentCarKey].map(Number), toLocation.coordinates)
-						// console.log(JSON.stringify(data[currentCarKey]))
-						if (data[currentCarKey][2] === "WAITING"){
-							console.log("car is waiting")
-							setMenuSate("waiting")
-						}
-					}else{
-						console.log("ERROR: current car key not available")
-					}
+				if(currentCarKey && data[currentCarKey][2]){
+					setMenuSate(data[currentCarKey][2])
 				}
+				// if(menuState=='findingCar'){
+				// 	// console.log("car key ->", currentCarKey)
+				// 	if(currentCarKey){
+				// 		// console.log(data[currentCarKey].map(Number), toLocation.coordinates)
+				// 		// console.log(JSON.stringify(data[currentCarKey]))
+				// 		if (data[currentCarKey][2] === "WAITING"){
+				// 			console.log("car is waiting")
+				// 			setMenuSate("waiting")
+				// 		}
+				// 	}else{
+				// 		console.log("ERROR: current car key not available")
+				// 	}
+				// }
+				// if(menuState=='transit'){
+				// 	// console.log("car key ->", currentCarKey)
+				// 	if(currentCarKey){
+				// 		// console.log(data[currentCarKey].map(Number), toLocation.coordinates)
+				// 		// console.log(JSON.stringify(data[currentCarKey]))
+				// 		if (data[currentCarKey][2] === "LEAVING"){
+				// 			console.log("reach destination. gtfo.")
+				// 			setMenuSate("leaving")
+				// 		}
+				// 	}else{
+				// 		console.log("ERROR: current car key not available")
+				// 	}
+				// }
 			})
 		}
 		
@@ -101,7 +117,7 @@ const Home = () => {
 	const userContext = useContext(UserContext);
 
 	const findCar = () => {
-		setMenuSate('findingCar')
+		setMenuSate('PICKUP')
 		setSubMenuText("Computing shortest path...")
 		// compute and display the shortest path 
 		getShortestPath(fromLocation.coordinates, toLocation.coordinates)
@@ -126,6 +142,14 @@ const Home = () => {
 		);
 	}
 
+	const startRide = () => {
+		setMenuSate('TRANSIT')
+		initiateTransit(fromLocation.coordinates, toLocation.coordinates, currentCarKey)
+		.then((response) => {
+			console.log(response);
+		})
+	}
+
 	return (
 		<div className="homeContainer">
 			<div className="topBar">
@@ -145,7 +169,7 @@ const Home = () => {
 
 			<div className='menu'>
 				{
-					menuState==='start' &&
+					menuState==='IDLE' &&
 					<>
 						<div className='fromToContainer'>
 							<div className='fromTo'>
@@ -186,16 +210,30 @@ const Home = () => {
 					</>
 				}
 				{
-					menuState==='findingCar' &&
+					menuState==='PICKUP' &&
 					<div>
 						<img className='radar' src={RadarLoader} />
 						<p style={{textAlign: "center"}}>{subMenuText}</p>
 					</div>
 				}
 				{
-					menuState==='waiting' &&
+					menuState==='WAITING' &&
 					<div>
 						<p style={{textAlign: "center"}}>Waiting for user</p>
+						<button onClick={() => startRide()}>Start Ride</button>
+					</div>
+				}
+				{
+					menuState==='TRANSIT' &&
+					<div>
+						<p style={{textAlign: "center"}}>In transit now...</p>
+					</div>
+				}
+				{
+					menuState==='LEAVING' &&
+					<div>
+						<p style={{textAlign: "center"}}>Reached destination. Please exit the vehicle.</p>
+						<button>Home</button>
 					</div>
 				}
 			</div>
