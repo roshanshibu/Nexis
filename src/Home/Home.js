@@ -22,6 +22,12 @@ import CarMenuIcon from '../Images/CarMenuIcon.svg'
 import PersonIcon from '../Images/PersonIcon.svg'
 import SearchIcon from '../Images/SeachIcon.svg'
 import RadarLoader from '../Images/radar.svg'
+import smCarDetailsImg from '../Images/smCarDetailsImg.png'
+import sdIndicatorSmall from '../Images/sdIndicatorSmall.svg'
+import smWaitingCar from '../Images/smWaitingCar.png'
+import smTransit from '../Images/smTransit.svg'
+import smLeavingImg from '../Images/smLeavingImg.png'
+import smOtherPickup from '../Images/smOtherPickup.png'
 import { getAllPaths, getShortestPath } from '../API/Paths';
 import { getAllLandmarks } from '../API/Landmarks';
 import io from 'socket.io-client';
@@ -129,7 +135,7 @@ const Home = () => {
 			.then((response) => {
 				console.log("nearest car:", response);
 				setCurrentCarKey(response.key)
-				setSubMenuText(`Contacting car ${response.key}...`)
+				setSubMenuText(`$CAR${response.key}`)
 				//initiate the pickup
 				initiatePickup(fromLocation.coordinates, response.key, userContext.currentUserId, commuterCount, carMode)
 				.then((response) => {
@@ -216,36 +222,75 @@ const Home = () => {
 				}
 				{
 					menuState==='PICKUP' &&
-					<div>
-						<img className='radar' src={RadarLoader} />
-						<p style={{textAlign: "center"}}>{subMenuText}</p>
-					</div>
+					<>
+					{
+						!subMenuText.startsWith("$CAR") ?	
+						<div>
+							<img className='radar' src={RadarLoader} />
+							<p style={{textAlign: "center"}}>{subMenuText}</p>
+						</div>
+						:
+						<div className='smCarDetailsParent'>
+							<div className='smCarDetails'>
+								<div className='smCarDetailsText'>
+									<p style={{fontSize: "15px"}}>Your Ride</p>
+									<p style={{fontSize: "45px", fontWeight: 700}}>{subMenuText.slice(4)}</p>
+									<p style={{fontSize: "30px"}}>L31M3N</p>
+								</div>
+								<img src={smCarDetailsImg} className='smCarDetailsImg'/>
+							</div>
+							<div className='smSourceDest'>
+								<img src={sdIndicatorSmall} className='sdIndicatorSmall'/>
+								<div className='smSourceDestText'>
+									<p>{fromLocation.name}</p>
+									<p>{toLocation.name}</p>
+								</div>
+							</div>
+						</div>
+					}
+					</>
 				}
 				{
 					menuState==='OTHER_PICKUP' &&
-					<div>
-						<p style={{textAlign: "center"}}>Your car is picking up another commuter.</p>
+					<div className='smOtherPickup'>
+						<p style={{fontSize: "27px", lineHeight: 1.1, fontWeight:600, 
+								paddingLeft: "30px", paddingTop: "25px"}}>
+									Your car is picking up <br />another commuter.
+						</p>
+						<img src={smOtherPickup} className='smOtherPickupImg'/>
 					</div>
 				}
 				{
 					menuState==='WAITING' &&
-					<div>
-						<p style={{textAlign: "center"}}>Waiting for user</p>
-						<button onClick={() => startRide()}>Start Ride</button>
+					<div className='smWaiting'>
+						<p style={{fontSize: "30px", lineHeight: 1, margin: 0, paddingLeft: "30px", paddingTop: "53px"}}>Your car <br /> is waiting</p>
+						<img src={smWaitingCar} className='smWaitingCar' />
+						<button onClick={() => startRide()} className='smWaitingButton'>Start Ride</button>
 					</div>
 				}
 				{
 					menuState==='TRANSIT' &&
-					<div>
-						<p style={{textAlign: "center"}}>In transit now...</p>
+					<div className='smTransit'>
+						<div className='smTransitText'>
+							<p style={{fontSize: "15px"}}>Arrival at</p>
+							<p style={{fontSize: "28px", fontWeight: 700}}>{toLocation.name.length >12 ? toLocation.name.slice(0,10)+"..." : toLocation.name}</p>
+							<p style={{fontSize: "22px"}}>at <span style={{fontWeight: 700}}>{"2:53 PM"}</span></p>
+							<button className='smTransitEndRideButton'>End Ride</button>
+						</div>
+						<img src={smTransit} className='smTransitImg' />
+
 					</div>
 				}
 				{
 					menuState==='LEAVING' &&
-					<div>
-						<p style={{textAlign: "center"}}>Reached destination. Please exit the vehicle.</p>
-						<button onClick={() => {openHomeMenu()}}>Home</button>
+					<div className='smTransit smLeaving'>
+						<div className='smTransitText'>
+							<p style={{fontSize: "27px", lineHeight: 1.1, fontWeight:600}}>You have <br/>arrived</p>
+							<button className='smLeavingButton' onClick={() => {openHomeMenu()}}>Exit Car</button>
+						</div>
+						<img src={smLeavingImg} className='smLeavingImg' />
 					</div>
+
 				}
 			</div>
 
@@ -327,7 +372,8 @@ const Home = () => {
 							position={[landmark.lat, landmark.lon]}
 							>
 								<Popup>
-									<p>{landmark.name}</p>
+									<h3>{landmark.name}</h3>
+									<p style={{textTransform: "capitalize"}}>{landmark.type}</p>
 								</Popup>	
 							</Marker>
 					))

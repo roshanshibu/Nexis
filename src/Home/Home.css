@@ -39,7 +39,7 @@
   border-radius: 18px;
   border: solid 1px #E4E4E4;
   box-shadow: 0px 0px 20px 0px rgb(0 0 0 / 10%);
-  padding: 15px;
+  /* padding: 15px; */
   z-index: 1;
   min-width: 365px;
   min-height: 350px;
@@ -51,6 +51,7 @@
   border-radius: 15px;
   padding: 15px 10px;
   margin-bottom: 20px;
+  margin: 15px;
 }
 
 .fromTo{
@@ -88,6 +89,7 @@ input:focus{
   flex-direction: column;
   gap: 20px;
   width: 80%;
+  margin-bottom: 15px;
 }
 .menuItem{
   display: flex;
@@ -172,7 +174,8 @@ input:focus{
 }
 
 .radar{
-  width: 280px;
+  width: 250px;
+  padding-top: 25px;
 }
 
 .leaflet-container {
@@ -190,4 +193,120 @@ input:focus{
 }
 .leaflet-bottom{
   display: none;
+}
+
+
+
+/* SubMenu styling */
+.smCarDetailsParent{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  line-height: 0;
+  padding-top: 38px;
+}
+
+.smCarDetails{
+  display: flex;
+  justify-content: space-between;
+}
+.smCarDetailsText{
+  padding-top: 38px;
+  padding-left: 30px;
+}
+.smCarDetailsImg{
+  width: 212px;
+  padding-top: 37px;
+}
+.smSourceDest{
+  display: flex;
+  padding-left: 30px;
+}
+.sdIndicatorSmall{
+  width: 10px;
+}
+.smSourceDestText{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 16px;
+}
+
+/* OTHER_PICKUP */
+.smOtherPickup{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.smOtherPickupImg{
+  width: 250px;
+  align-self: flex-end;
+}
+
+/* WAITING */
+.smWaiting{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.smWaitingCar{
+  width: 233px;
+  align-self: flex-end;
+}
+.smWaitingButton{
+  background: #00A7FF;
+  border: none;
+  color: white;
+  margin: 20px 30px 15px 30px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* TRANSIT */
+.smTransit{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.smTransitText{
+  line-height: 0.4;
+  padding-left: 30px;
+  place-self: center;
+}
+.smTransitImg{
+  width: 124px;
+  padding-right: 10px;
+  padding-top: 10px;
+}
+.smTransitEndRideButton{
+  background: #BD4470;
+  border: none;
+  color: white;
+  height: 40px;
+  margin-top: 20px;
+  padding: 0px 35px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* WAITING */
+/* uses some of the classes from above transit */
+.smLeaving{
+  padding-top: 50px;
+}
+.smLeavingImg{
+  width: 160px;
+}
+.smLeavingButton{
+  background: #00A7FF;
+  border: none;
+  color: white;
+  height: 40px;
+  border-radius: 10px;
+  padding: 0px 30px;
+  font-size: 16px;
+  cursor: pointer;
 }
