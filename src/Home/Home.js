@@ -40,6 +40,8 @@ const Home = () => {
 	const [availableLandmarks, setAvailableLandmarks] = useState(null);
 
 	const [menuState, setMenuSate] = useState('IDLE')
+	let blockMenuStateUpdate =false
+	
 
 	const [fromLocation, setFromLocation] = useState(null);
 	const [toLocation, setToLocation] = useState(null);
@@ -68,34 +70,15 @@ const Home = () => {
 				// console.log(data)
 				setCars(data)
 				if(currentCarKey && data[currentCarKey][2]){
-					setMenuSate(data[currentCarKey][2])
+					if (menuState === 'PICKUP' && data[currentCarKey][2] == 'WAITING' && !blockMenuStateUpdate){
+						setMenuSate(data[currentCarKey][2])
+						blockMenuStateUpdate = true
+					}
+					if (menuState === 'TRANSIT' && data[currentCarKey][2] == 'LEAVING' && !blockMenuStateUpdate){
+						setMenuSate(data[currentCarKey][2])
+						blockMenuStateUpdate = true
+					}
 				}
-				// if(menuState=='findingCar'){
-				// 	// console.log("car key ->", currentCarKey)
-				// 	if(currentCarKey){
-				// 		// console.log(data[currentCarKey].map(Number), toLocation.coordinates)
-				// 		// console.log(JSON.stringify(data[currentCarKey]))
-				// 		if (data[currentCarKey][2] === "WAITING"){
-				// 			console.log("car is waiting")
-				// 			setMenuSate("waiting")
-				// 		}
-				// 	}else{
-				// 		console.log("ERROR: current car key not available")
-				// 	}
-				// }
-				// if(menuState=='transit'){
-				// 	// console.log("car key ->", currentCarKey)
-				// 	if(currentCarKey){
-				// 		// console.log(data[currentCarKey].map(Number), toLocation.coordinates)
-				// 		// console.log(JSON.stringify(data[currentCarKey]))
-				// 		if (data[currentCarKey][2] === "LEAVING"){
-				// 			console.log("reach destination. gtfo.")
-				// 			setMenuSate("leaving")
-				// 		}
-				// 	}else{
-				// 		console.log("ERROR: current car key not available")
-				// 	}
-				// }
 			})
 		}
 		
@@ -126,7 +109,8 @@ const Home = () => {
 			setHighlightPath(response);
 			setSubMenuText("Finding nearest car...")
 			// get the nearest available car details
-			getNearestAvailableCar(fromLocation.coordinates, carMode, commuterCount)
+			let carModeName = carMode==CarMode.NORMAL? 'NORMAL' : 'CARPOOL'
+			getNearestAvailableCar(fromLocation.coordinates, carModeName, commuterCount)
 			.then((response) => {
 				console.log("nearest car:", response);
 				setCurrentCarKey(response.key)
@@ -147,7 +131,14 @@ const Home = () => {
 		initiateTransit(fromLocation.coordinates, toLocation.coordinates, currentCarKey)
 		.then((response) => {
 			console.log(response);
+			blockMenuStateUpdate = false
 		})
+	}
+
+	const openHomeMenu = () => {
+		setMenuSate('IDLE')
+		setFromLocation(null)
+		setToLocation(null)
 	}
 
 	return (
@@ -233,7 +224,7 @@ const Home = () => {
 					menuState==='LEAVING' &&
 					<div>
 						<p style={{textAlign: "center"}}>Reached destination. Please exit the vehicle.</p>
-						<button>Home</button>
+						<button onClick={() => {openHomeMenu()}}>Home</button>
 					</div>
 				}
 			</div>
