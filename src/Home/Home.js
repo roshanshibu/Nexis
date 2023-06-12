@@ -50,6 +50,8 @@ const Home = () => {
 	const [currentCarKey, setCurrentCarKey] = useState(null);
 
 	const [highlightPath, setHighlightPath] = useState(null);
+	const [routeSpots, setRouteSpots] = useState([]);
+
 	const [subMenuText, setSubMenuText] = useState("")
 
 	const [socket, setSocket] = useState(null)
@@ -143,12 +145,13 @@ const Home = () => {
 		setMenuSate('TRANSIT')
 		initiateTransit(fromLocation.coordinates, toLocation.coordinates, currentCarKey)
 		.then((response) => {
-			console.log(response);
 			blockMenuStateUpdate = false
+			setRouteSpots(response)
 		})
 	}
 
 	const openHomeMenu = () => {
+		setRouteSpots([])
 		setMenuSate('IDLE')
 	}
 
@@ -311,6 +314,19 @@ const Home = () => {
 						/>
 					:
 						<></>
+				}
+
+				{
+					//interesting spots on the transit route
+					//show only in NORMAL mode
+					routeSpots &&
+					carMode==CarMode.NORMAL &&
+					routeSpots.map((landmark) => (
+							<Marker 
+							key={landmark.name}
+							position={[landmark.lat, landmark.lon]}
+							/>
+					))
 				}
 			</MapContainer>
 		</div>
