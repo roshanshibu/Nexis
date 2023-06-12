@@ -325,7 +325,11 @@ const Home = () => {
 							<Marker 
 							key={landmark.name}
 							position={[landmark.lat, landmark.lon]}
-							/>
+							>
+								<Popup>
+									<p>{landmark.name}</p>
+								</Popup>	
+							</Marker>
 					))
 				}
 			</MapContainer>
