@@ -71,12 +71,25 @@ const Home = () => {
 				setCars(data)
 				if(currentCarKey && data[currentCarKey][2]){
 					if (menuState === 'PICKUP' && data[currentCarKey][2] == 'WAITING' && !blockMenuStateUpdate){
+						console.log ("user array",data[currentCarKey][3])
+						console.log("is carpool?", carMode == CarMode.CARPOOL)
+						console.log("is userid NOT in users list", !data[currentCarKey][3].includes('' + userContext.currentUserId))
+						if(carMode == CarMode.CARPOOL && !data[currentCarKey][3].includes('' + userContext.currentUserId))
+							setMenuSate("OTHER_PICKUP")
+						else{
+							setMenuSate(data[currentCarKey][2])
+							blockMenuStateUpdate = true
+						}
+					}
+					if (menuState === 'OTHER_PICKUP' && data[currentCarKey][2] == 'PICKUP' && data[currentCarKey][3].includes('' + userContext.currentUserId)){
 						setMenuSate(data[currentCarKey][2])
-						blockMenuStateUpdate = true
 					}
 					if (menuState === 'TRANSIT' && data[currentCarKey][2] == 'LEAVING' && !blockMenuStateUpdate){
 						setMenuSate(data[currentCarKey][2])
 						blockMenuStateUpdate = true
+						setHighlightPath(null)
+						setFromLocation(null)
+						setToLocation(null)
 					}
 				}
 			})
@@ -137,8 +150,6 @@ const Home = () => {
 
 	const openHomeMenu = () => {
 		setMenuSate('IDLE')
-		setFromLocation(null)
-		setToLocation(null)
 	}
 
 	return (
@@ -205,6 +216,12 @@ const Home = () => {
 					<div>
 						<img className='radar' src={RadarLoader} />
 						<p style={{textAlign: "center"}}>{subMenuText}</p>
+					</div>
+				}
+				{
+					menuState==='OTHER_PICKUP' &&
+					<div>
+						<p style={{textAlign: "center"}}>Your car is picking up another commuter.</p>
 					</div>
 				}
 				{
