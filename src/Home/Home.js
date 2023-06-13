@@ -28,6 +28,7 @@ import smWaitingCar from '../Images/smWaitingCar.png'
 import smTransit from '../Images/smTransit.svg'
 import smLeavingImg from '../Images/smLeavingImg.png'
 import smOtherPickup from '../Images/smOtherPickup.png'
+import HFireDeptBanner from '../Images/HFireDeptBanner.svg'
 import { getAllPaths, getShortestPath } from '../API/Paths';
 import { getAllLandmarks } from '../API/Landmarks';
 import io from 'socket.io-client';
@@ -190,13 +191,26 @@ const Home = () => {
 				{
 					menuState==='IDLE' &&
 					<>
+						{
+							//fire station banner
+							userContext.currentUserId == 3 &&
+							<img src={HFireDeptBanner} className='fireStationBanner'/> 
+						}
 						<div className='fromToContainer'>
-							<div className='fromTo'>
-								<img className='fromToIcon' src={FromC} />
-								<input className='menuInput' type='text' style={{width: "180px"}} value={fromLocation? fromLocation.name : ""} readOnly></input>
-								<img className='closeIcon' src={CloseIcon} onClick={() => setFromLocation(null)}/>
-							</div>
-							<div className="vertical_dotted_line"></div>
+							{
+							// from is not needed if the user is the fire station
+							userContext.currentUserId != 3 ? 
+							<>
+								<div className='fromTo'>
+									<img className='fromToIcon' src={FromC} />
+									<input className='menuInput' type='text' style={{width: "180px"}} value={fromLocation? fromLocation.name : ""} readOnly></input>
+									<img className='closeIcon' src={CloseIcon} onClick={() => setFromLocation(null)}/>
+								</div>
+								<div className="vertical_dotted_line"></div>
+							</>
+							:
+							<></>
+							}
 							<div className='fromTo'>
 								<img className='fromToIcon' src={ToC} />
 								<input className='menuInput'type='text' style={{width: "180px"}} value={toLocation? toLocation.name : ""} readOnly></input>
@@ -210,17 +224,21 @@ const Home = () => {
 									format={(num) => {return num + (num==1?' person':' persons')}}
 									onChange={(newVal)=>{setCommuterCount(newVal)}}/>
 							</div>
-							<div className='menuItem'>
-								<img src={CarMenuIcon} className='menuItemIcon' />
-								<div className='binaryRadio'>
-									<input className='leftInput' label="Private" type="radio" 
-										id="private" name="rideMode" value="1" defaultChecked
-										onChange={(e)=> {setCarMode(CarMode.NORMAL)}} />
-									<input className='rightInput' label="Carpool" type="radio" 
-										id="carpool" name="rideMode" value="2"
-										onChange={(e)=> {setCarMode(CarMode.CARPOOL)}} />
+							{
+								// car mode not needed in fire station
+								userContext.currentUserId != 3 &&	
+								<div className='menuItem'>
+									<img src={CarMenuIcon} className='menuItemIcon' />
+									<div className='binaryRadio'>
+										<input className='leftInput' label="Private" type="radio" 
+											id="private" name="rideMode" value="1" defaultChecked
+											onChange={(e)=> {setCarMode(CarMode.NORMAL)}} />
+										<input className='rightInput' label="Carpool" type="radio" 
+											id="carpool" name="rideMode" value="2"
+											onChange={(e)=> {setCarMode(CarMode.CARPOOL)}} />
+									</div>
 								</div>
-							</div>
+							}
 							<button className='findCarButton' onClick={() => findCar()}>
 								<img className='searchIcon' src={SearchIcon} />
 								<p>Find Car</p>
@@ -369,6 +387,7 @@ const Home = () => {
 							toLocation={toLocation}
 							setToLocation={setToLocation}
 							key={landmark.location.name}
+							isFireStation={userContext.currentUserId == 3}
 							/>
 					))
 				}

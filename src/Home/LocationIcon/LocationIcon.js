@@ -22,12 +22,18 @@ const LocationIcon = (props) => {
         eventHandlers={{
             click: (e) => {
                 console.log(props.landmark)
-                if(!props.fromLocation){
-                    if (JSON.stringify(props.toLocation) !== JSON.stringify(e.target.options.data))
-                        props.setFromLocation(e.target.options.data)
-                }else{
-                    if (JSON.stringify(props.fromLocation) !== JSON.stringify(e.target.options.data))
-                        props.setToLocation(e.target.options.data)
+                if(props.isFireStation){
+                    props.setFromLocation(null)
+                    props.setToLocation(e.target.options.data)
+                }
+                else{
+                    if(!props.fromLocation){
+                        if (JSON.stringify(props.toLocation) !== JSON.stringify(e.target.options.data))
+                            props.setFromLocation(e.target.options.data)
+                    }else{
+                        if (JSON.stringify(props.fromLocation) !== JSON.stringify(e.target.options.data))
+                            props.setToLocation(e.target.options.data)
+                    }
                 }
             },
         }}
