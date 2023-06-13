@@ -7,3 +7,11 @@ export function getAllLandmarks() {
       console.log('Fetch error: ', error);
     });
 }
+
+export function getAllFireFighters() {
+  return fetch(endpoint + 'allFirefighters')
+    .then((response) => response.json())
+    .catch((error) => {
+      console.log('Fetch error: ', error);
+    });
+}

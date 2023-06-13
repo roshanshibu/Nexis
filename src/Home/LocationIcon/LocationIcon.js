@@ -7,6 +7,8 @@ import {
   } from 'react-leaflet';
 
 const LocationIcon = (props) => {
+    if(props.type == "firefighters")
+        return (<></>)
     return (
     <Marker
         key={props.landmark.icon}
@@ -38,26 +40,6 @@ const LocationIcon = (props) => {
             },
         }}
     >
-        {/* <CircleMarker
-            center={[
-                props.landmark.location.coordinates[1],
-                props.landmark.location.coordinates[0],
-            ]}
-            radius={5}
-            color="blue"
-            fillColor="blue"
-            fillOpacity={1}
-        /> */}
-        {/* <Popup>
-            <div>
-                <h2>
-                    {props.landmark.location.name}
-                </h2> 
-                <p>
-                    {props.landmark.location.type}
-                </p>
-            </div>
-        </Popup> */}
     </Marker>
     );
 };

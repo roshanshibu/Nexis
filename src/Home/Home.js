@@ -30,7 +30,7 @@ import smLeavingImg from '../Images/smLeavingImg.png'
 import smOtherPickup from '../Images/smOtherPickup.png'
 import HFireDeptBanner from '../Images/HFireDeptBanner.svg'
 import { getAllPaths, getShortestPath } from '../API/Paths';
-import { getAllLandmarks } from '../API/Landmarks';
+import { getAllFireFighters, getAllLandmarks } from '../API/Landmarks';
 import io from 'socket.io-client';
 import LocationIcon from './LocationIcon/LocationIcon';
 import { getNearestAvailableCar, initiatePickup, initiateTransit } from '../API/Cars';
@@ -45,6 +45,7 @@ const Home = () => {
 	const [showAvailablePaths, setShowAvailablePaths] = useState(false);
 	const [availablePaths, setAvailablePaths] = useState(null);
 	const [availableLandmarks, setAvailableLandmarks] = useState(null);
+	const [fireFighters, setFireFighters] = useState(null);
 
 	const [menuState, setMenuSate] = useState('IDLE')
 	let blockMenuStateUpdate =false
@@ -115,6 +116,11 @@ const Home = () => {
 		getAllLandmarks().then((response) => {
 			// console.log(response);
 			setAvailableLandmarks(response);
+		});
+
+		getAllFireFighters().then((response) => {
+			// console.log(response);
+			setFireFighters(response);
 		});
 
 		if(showAvailablePaths){
@@ -368,16 +374,17 @@ const Home = () => {
 
 				{cars &&
 					Object.entries(cars).map(([carName, carProps]) => {
+						console.log (carProps)
 						return (<CarIcon 
 							position={carProps.slice(0,2).map(loc => +loc)}
 							duration={1000}
 							key={carName}
-							data={{'carName':carName}} 
+							data={{'carName':carName, 'state':carProps[2]}} 
 							message={carName}/>)
 					})
 				}
 
-				{
+{
 					availableLandmarks &&
 					availableLandmarks.map((landmark) => (
 						<LocationIcon 
@@ -387,6 +394,20 @@ const Home = () => {
 							toLocation={toLocation}
 							setToLocation={setToLocation}
 							key={landmark.location.name}
+							isFireStation={userContext.currentUserId == 3}
+							/>
+					))
+				}
+
+				
+				{
+					// for fire station, show firefighters
+					fireFighters &&
+					fireFighters.map((person) => (
+						<LocationIcon
+							type={"firefighters"} 
+							landmark={person}
+							key={person.location.name}
 							isFireStation={userContext.currentUserId == 3}
 							/>
 					))
