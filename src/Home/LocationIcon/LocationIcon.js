@@ -6,9 +6,27 @@ import {
     CircleMarker,
   } from 'react-leaflet';
 
+
+const FireFighterIcon = new Icon({
+    iconUrl: require(`../../Images/markers/firefighter_marker.png`),
+    iconSize: [35, 30],
+});
+
+
 const LocationIcon = (props) => {
-    if(props.type == "firefighters")
-        return (<></>)
+    let c_landmark = props.landmark
+    let firefightersList = []
+    let type = "landmark"
+    if (props.isFireStation){
+        firefightersList = props.fireFighters
+        firefightersList.map((firefighter) => {
+            if (firefighter.icon == c_landmark.icon){
+                console.log("match!")
+                type = "firefighter"
+            }
+        })
+    }
+
     return (
     <Marker
         key={props.landmark.icon}
@@ -16,12 +34,17 @@ const LocationIcon = (props) => {
             props.landmark.location.coordinates[0],
             props.landmark.location.coordinates[1],
         ]}
-        // icon={new Icon({
-        //     iconUrl: require(`../../Images/markers/${props.landmark.icon}.png`),
-        //     iconSize: [35, 30],
-        //   })}
+        icon = {type == "firefighter" ? FireFighterIcon 
+                    : 
+                    new Icon({
+                        iconUrl: require(`../../Images/markers/${props.landmark.icon}.png`),
+                        iconSize: [35, 30],
+                    })}
         data={props.landmark.location}
-        eventHandlers={{
+        eventHandlers={
+            type == "firefighter" ? 
+            null:
+            {
             click: (e) => {
                 console.log(props.landmark)
                 if(props.isFireStation){

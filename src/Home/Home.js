@@ -374,7 +374,6 @@ const Home = () => {
 
 				{cars &&
 					Object.entries(cars).map(([carName, carProps]) => {
-						console.log (carProps)
 						return (<CarIcon 
 							position={carProps.slice(0,2).map(loc => +loc)}
 							duration={1000}
@@ -384,9 +383,10 @@ const Home = () => {
 					})
 				}
 
-{
+				{
 					availableLandmarks &&
-					availableLandmarks.map((landmark) => (
+					fireFighters &&
+					(availableLandmarks).map((landmark) => (
 						<LocationIcon 
 							landmark={landmark}
 							fromLocation={fromLocation}
@@ -395,20 +395,7 @@ const Home = () => {
 							setToLocation={setToLocation}
 							key={landmark.location.name}
 							isFireStation={userContext.currentUserId == 3}
-							/>
-					))
-				}
-
-				
-				{
-					// for fire station, show firefighters
-					fireFighters &&
-					fireFighters.map((person) => (
-						<LocationIcon
-							type={"firefighters"} 
-							landmark={person}
-							key={person.location.name}
-							isFireStation={userContext.currentUserId == 3}
+							fireFighters={fireFighters}
 							/>
 					))
 				}
