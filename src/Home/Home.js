@@ -54,6 +54,8 @@ const Home = () => {
 	const [commuterCount, setCommuterCount] = useState(1);
 	const [carMode, setCarMode] = useState(CarMode.NORMAL)
 	const [currentCarKey, setCurrentCarKey] = useState(null);
+	const [currentCarETA, setCurrentCarETA] = useState(0);
+	const [currentCarState, setCurrentCarState] = useState("");
 
 	const [highlightPath, setHighlightPath] = useState(null);
 	const [routeSpots, setRouteSpots] = useState([]);
@@ -77,6 +79,12 @@ const Home = () => {
 			socket.on('location', (data) => {
 				// console.log(data)
 				setCars(data)
+				if(currentCarKey && data[currentCarKey][4]){
+					setCurrentCarETA(data[currentCarKey][4])
+				}
+				if(currentCarKey && data[currentCarKey][2]){
+					setCurrentCarState(data[currentCarKey][2])
+				}
 				if(currentCarKey && data[currentCarKey][2]){
 					if (menuState === 'PICKUP' && data[currentCarKey][2] == 'WAITING' && !blockMenuStateUpdate){
 						console.log ("user array",data[currentCarKey][3])
@@ -242,7 +250,17 @@ const Home = () => {
 							<div className='smSourceDest'>
 								<img src={sdIndicatorSmall} className='sdIndicatorSmall'/>
 								<div className='smSourceDestText'>
-									<p>{fromLocation.name}</p>
+									<p>{fromLocation.name} 
+											{carMode==CarMode.NORMAL && currentCarETA > 0?
+												<span className='smSourceDestETA'>
+													{currentCarETA == 1 ?
+														"Now"
+														: 
+														currentCarETA + " seconds"}
+												</span>
+												: 
+												""}
+									</p>
 									<p>{toLocation.name}</p>
 								</div>
 							</div>
@@ -272,9 +290,25 @@ const Home = () => {
 					menuState==='TRANSIT' &&
 					<div className='smTransit'>
 						<div className='smTransitText'>
-							<p style={{fontSize: "15px"}}>Arrival at</p>
+							<p style={{fontSize: "15px"}}>
+									{currentCarState=="TRANSIT"? 
+										"Arriving at"
+									:
+										"Your destination"}
+							</p>
 							<p style={{fontSize: "28px", fontWeight: 700}}>{toLocation.name.length >12 ? toLocation.name.slice(0,10)+"..." : toLocation.name}</p>
-							<p style={{fontSize: "22px"}}>at <span style={{fontWeight: 700}}>{"2:53 PM"}</span></p>
+							<p className={currentCarETA > 0 ? "fadeInETA" : "hideETA"}>
+								<span style={{fontWeight: 700}}>
+								{currentCarState=="TRANSIT"?
+									currentCarETA == 1 ?
+										"Now"
+										: 
+										"in " + currentCarETA + " seconds"
+									:
+									""
+								}
+								</span>
+							</p>
 							<button className='smTransitEndRideButton'>End Ride</button>
 						</div>
 						<img src={smTransit} className='smTransitImg' />

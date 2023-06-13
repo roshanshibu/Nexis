@@ -231,6 +231,13 @@ input:focus{
   gap: 6px;
   padding-left: 16px;
 }
+.smSourceDestETA{
+  margin-left: 13px;
+  font-size: 14px;
+  background: #0000000a;
+  padding: 1px 5px;
+  border-radius: 5px;
+}
 
 /* OTHER_PICKUP */
 .smOtherPickup{
@@ -279,6 +286,15 @@ input:focus{
   width: 124px;
   padding-right: 10px;
   padding-top: 10px;
+}
+.fadeInETA{
+  opacity: 1;
+  transition: 0.5s linear opacity;
+  font-size: 22px;
+}
+.hideETA{
+  opacity: 0;
+  transition: 0.5s linear;
 }
 .smTransitEndRideButton{
   background: #BD4470;
