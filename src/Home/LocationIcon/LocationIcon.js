@@ -38,7 +38,9 @@ const LocationIcon = (props) => {
                     : 
                     new Icon({
                         iconUrl: require(`../../Images/markers/${props.landmark.icon}.png`),
-                        iconSize: [35, 30],
+                        iconSize: [50, 50],
+                        shadowUrl: require('../../Images/markers/marker-shadow.png'),
+                        shadowSize: [50, 50]
                     })}
         data={props.landmark.location}
         eventHandlers={
