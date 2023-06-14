@@ -35,7 +35,7 @@ import { getAllPaths, getShortestPath } from '../API/Paths';
 import { getAllFireFighters, getAllLandmarks, setDestinationActivity } from '../API/Landmarks';
 import io from 'socket.io-client';
 import LocationIcon from './LocationIcon/LocationIcon';
-import { getNearestAvailableCar, initiateEmergencyPickup, initiatePickup, initiateTransit } from '../API/Cars';
+import { getNearestAvailableCar, initiateEmergencyPickup, initiatePickup, initiateTransit, stopRide } from '../API/Cars';
 import { UserContext } from '../App';
 
 const Home = () => {
@@ -195,6 +195,14 @@ const Home = () => {
 					});
 			})
 		})
+	}
+
+	const endRide = () => {
+		stopRide(currentCarKey)
+			.then((response) => {
+				setMenuSate('IDLE')
+				setHighlightPath(null)
+			})
 	}
 
 	const pickupFireFighters = () => {
@@ -383,7 +391,7 @@ const Home = () => {
 								}
 								</span>
 							</p>
-							<button className='smTransitEndRideButton'>End Ride</button>
+							<button className='smTransitEndRideButton' onClick={() => {endRide()}}>End Ride</button>
 						</div>
 						<img src={smTransit} className='smTransitImg' />
 
