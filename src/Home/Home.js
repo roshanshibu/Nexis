@@ -441,7 +441,7 @@ const Home = () => {
 							position={carProps.slice(0,2).map(loc => +loc)}
 							duration={1000}
 							key={carName}
-							data={{'carName':carName, 'state':carProps[2]}} 
+							data={{'carName':carName, 'state':carProps[2], 'charge':carProps[5]}} 
 							message={carName}/>)
 					})
 				}

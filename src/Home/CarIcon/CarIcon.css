@@ -1,0 +1,25 @@
+.carPopup{
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+}
+.carPopup p{
+    margin: 0;
+    font-size: 15px;
+}
+.carPopup h2{
+    margin: 0;
+    margin-bottom: 5px;
+}
+.leaflet-popup-tip-container{
+    display: none;
+}
+.leaflet-popup-content-wrapper{
+    margin-bottom: 5px;
+}
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background: white;
+    color: #333;
+    box-shadow: 0 3px 14px rgb(70 70 70 / 10%);
+}

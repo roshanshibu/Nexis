@@ -49,9 +49,12 @@ const CarIcon = (props) => {
         },
       }}
     >
-      {/* <Popup>
-        <p>{props.message}</p>
-      </Popup> */}
+      <Popup>
+        <div className='carPopup'>
+          <h2>{props.data.carName}</h2>
+          <p>{"Charge: " + props.data.charge + "%"}</p>
+        </div>
+      </Popup>
     </LeafletTrackingMarker>
   );
 };
