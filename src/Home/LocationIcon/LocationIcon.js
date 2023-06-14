@@ -64,9 +64,23 @@ const LocationIcon = (props) => {
             },
         }}
     >
-        {/* <Popup>
-            <p>Hello there</p>
-        </Popup> */}
+        {props.landmark.location.count >= 2 &&
+            <>    
+            <CircleMarker
+                    center={[
+                    props.landmark.location.coordinates[0],
+                    props.landmark.location.coordinates[1],
+                    ]}
+                    radius={50}
+                    color="#ff000000"
+                    fillColor="#0b7bab21"
+                    fillOpacity={1}
+                />
+            <Popup>
+                <p>Popular Now</p>
+            </Popup>
+            </>
+        }
     </Marker>
     );
 };

@@ -32,7 +32,7 @@ import HFireDeptBanner from '../Images/HFireDeptBanner.svg'
 import WarningIcon from '../Images/warningIcon.png'
 import HelpIsOnTheWay from '../Images/HelpIsOnTheWay.svg'
 import { getAllPaths, getShortestPath } from '../API/Paths';
-import { getAllFireFighters, getAllLandmarks } from '../API/Landmarks';
+import { getAllFireFighters, getAllLandmarks, setDestinationActivity } from '../API/Landmarks';
 import io from 'socket.io-client';
 import LocationIcon from './LocationIcon/LocationIcon';
 import { getNearestAvailableCar, initiateEmergencyPickup, initiatePickup, initiateTransit } from '../API/Cars';
@@ -185,6 +185,15 @@ const Home = () => {
 		.then((response) => {
 			blockMenuStateUpdate = false
 			setRouteSpots(response)
+			//register activity with mongo
+			setDestinationActivity(toLocation.coordinates[0], toLocation.coordinates[1])
+				.then((response) => {
+					// console.log("registered activity with mongo:",response)
+					//get updated counts
+					getAllLandmarks().then((response) => {
+						setAvailableLandmarks(response);
+					});
+			})
 		})
 	}
 
