@@ -3,6 +3,8 @@ import { Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import './CarIcon.css';
 import { useEffect, useState } from 'react';
+import BatteryFull from '../../Images/battery-full.svg'
+import BatteryMed from '../../Images/battery-med.svg'
 
 const carMarker = new Icon({
   iconUrl: require('../../Images/car_east.png'),
@@ -52,7 +54,10 @@ const CarIcon = (props) => {
       <Popup>
         <div className='carPopup'>
           <h2>{props.data.carName}</h2>
-          <p>{"Charge: " + props.data.charge + "%"}</p>
+          <div className='chargeInfo'>
+            <img src={+props.data.charge > 80 ? BatteryFull : BatteryMed} className='carBattery'/>
+            <p>{props.data.charge + "%"}</p>
+          </div>
         </div>
       </Popup>
     </LeafletTrackingMarker>
