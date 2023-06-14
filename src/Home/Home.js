@@ -372,16 +372,7 @@ const Home = () => {
 				// url="https://api.mapbox.com/styles/v1/zawolf/clieu5urg002g01pghny7clln/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiemF3b2xmIiwiYSI6ImNsaWVyMjZuZjBqbHUzZnFqNXFmYnAwbWMifQ.ffjLLlGHsA4MMnE8_BYv7g"
 				/>
 
-				{cars &&
-					Object.entries(cars).map(([carName, carProps]) => {
-						return (<CarIcon 
-							position={carProps.slice(0,2).map(loc => +loc)}
-							duration={1000}
-							key={carName}
-							data={{'carName':carName, 'state':carProps[2]}} 
-							message={carName}/>)
-					})
-				}
+
 
 				{
 					availableLandmarks &&
@@ -398,6 +389,17 @@ const Home = () => {
 							fireFighters={fireFighters}
 							/>
 					))
+				}
+
+				{cars &&
+					Object.entries(cars).map(([carName, carProps]) => {
+						return (<CarIcon 
+							position={carProps.slice(0,2).map(loc => +loc)}
+							duration={1000}
+							key={carName}
+							data={{'carName':carName, 'state':carProps[2]}} 
+							message={carName}/>)
+					})
 				}
 
 				{
