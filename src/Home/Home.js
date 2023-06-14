@@ -51,7 +51,7 @@ const Home = () => {
 
 	const [menuState, setMenuSate] = useState('IDLE')
 	let blockMenuStateUpdate =false
-	
+	let f_blockMenuStateUpdate =true
 
 	const [fromLocation, setFromLocation] = useState(null);
 	const [toLocation, setToLocation] = useState(null);
@@ -114,10 +114,14 @@ const Home = () => {
 					}
 				}
 				if(data[EmergencyCarKey] && userContext.currentUserId == 3){
-					if(data[EmergencyCarKey][2] == 'IDLE')
-						setMenuSate('IDLE')
-					else
+					if(data[EmergencyCarKey][2] == 'IDLE'){
+						if (!f_blockMenuStateUpdate)
+							setMenuSate('IDLE')
+					}
+					else{
 						setMenuSate('EMERGENCY_PICKUP')
+						f_blockMenuStateUpdate = false
+					}
 				}
 			})
 		}
@@ -195,8 +199,9 @@ const Home = () => {
 		initiateEmergencyPickup(fArray, toLocation.coordinates)
 		.then((response) => {
 			console.log(response)
+			setMenuSate('EMERGENCY_PICKUP')
+			f_blockMenuStateUpdate = true
 		})
-		setMenuSate("EMERGENCY_PICKUP")
 	}
 
 	const openHomeMenu = () => {
