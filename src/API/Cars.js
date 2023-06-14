@@ -41,3 +41,16 @@ export function initiateTransit (pickupLoc, destinationLoc, carKey) {
             console.log("Fetch error: ",error);
         });
 }
+
+
+
+export function initiateEmergencyPickup (eLocations, eDestination) {
+    return fetch(endpoint + "initiateEmergencyPickup?"+ new URLSearchParams({
+            eLocations: encodeURIComponent(JSON.stringify(eLocations)),
+            eDestination: encodeURIComponent(JSON.stringify(eDestination)),
+        }))
+        .then(response => response.json())
+        .catch(error => {
+            console.log("Fetch error: ",error);
+        });
+}

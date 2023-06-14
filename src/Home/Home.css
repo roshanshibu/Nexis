@@ -332,5 +332,31 @@ input:focus{
 
 .fireStationBanner{
   width: 355px;
-  padding: 20px 0px 5px 0px;
+  padding: 45px 0px 15px 0px;
+}
+
+.fireButton{
+  margin-top: 27px;
+  background: #f53053;
+}
+
+.searchIcon{
+  width: 20px;
+}
+
+.fireMenuBg{
+  background: #ffefef;
+}
+
+.smEmergency{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px 19px;
+  width: 100%;
+}
+
+.helpIsOnTheWay{
+  width: 300px;
+  padding-top: 20px;
 }

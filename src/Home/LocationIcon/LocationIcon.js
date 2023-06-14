@@ -21,7 +21,6 @@ const LocationIcon = (props) => {
         firefightersList = props.fireFighters
         firefightersList.map((firefighter) => {
             if (firefighter.icon == c_landmark.icon){
-                console.log("match!")
                 type = "firefighter"
             }
         })

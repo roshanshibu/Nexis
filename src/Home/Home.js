@@ -20,7 +20,7 @@ import ToC from '../Images/ToC.svg'
 import CloseIcon from '../Images/close.svg'
 import CarMenuIcon from '../Images/CarMenuIcon.svg'
 import PersonIcon from '../Images/PersonIcon.svg'
-import SearchIcon from '../Images/SeachIcon.svg'
+import SearchIcon from '../Images/SeachIcon.png'
 import RadarLoader from '../Images/radar.svg'
 import smCarDetailsImg from '../Images/smCarDetailsImg.png'
 import sdIndicatorSmall from '../Images/sdIndicatorSmall.svg'
@@ -29,11 +29,13 @@ import smTransit from '../Images/smTransit.svg'
 import smLeavingImg from '../Images/smLeavingImg.png'
 import smOtherPickup from '../Images/smOtherPickup.png'
 import HFireDeptBanner from '../Images/HFireDeptBanner.svg'
+import WarningIcon from '../Images/warningIcon.png'
+import HelpIsOnTheWay from '../Images/HelpIsOnTheWay.svg'
 import { getAllPaths, getShortestPath } from '../API/Paths';
 import { getAllFireFighters, getAllLandmarks } from '../API/Landmarks';
 import io from 'socket.io-client';
 import LocationIcon from './LocationIcon/LocationIcon';
-import { getNearestAvailableCar, initiatePickup, initiateTransit } from '../API/Cars';
+import { getNearestAvailableCar, initiateEmergencyPickup, initiatePickup, initiateTransit } from '../API/Cars';
 import { UserContext } from '../App';
 
 const Home = () => {
@@ -67,6 +69,7 @@ const Home = () => {
 	const [socket, setSocket] = useState(null)
 	const [cars, setCars] = useState(null)
 
+	let EmergencyCarKey = "Red"
 	useEffect(() => {
 		if(socket === null)
 		{
@@ -110,6 +113,12 @@ const Home = () => {
 						setToLocation(null)
 					}
 				}
+				if(data[EmergencyCarKey]){
+					if(data[EmergencyCarKey][2] == 'IDLE')
+						setMenuSate('IDLE')
+					else
+						setMenuSate('EMERGENCY_PICKUP')
+				}
 			})
 		}
 		
@@ -136,6 +145,10 @@ const Home = () => {
 	const userContext = useContext(UserContext);
 
 	const findCar = () => {
+		if (!fromLocation || !toLocation){
+			alert("Enter the source and destination")
+			return
+		}
 		setMenuSate('PICKUP')
 		setSubMenuText("Computing shortest path...")
 		// compute and display the shortest path 
@@ -171,6 +184,21 @@ const Home = () => {
 		})
 	}
 
+	const pickupFireFighters = () => {
+		if (!toLocation){
+			alert("Enter the destination")
+			return
+		}
+		let fArray = fireFighters.map((f) => {
+							return f.location.coordinates
+						})
+		initiateEmergencyPickup(fArray, toLocation.coordinates)
+		.then((response) => {
+			console.log(response)
+		})
+		setMenuSate("EMERGENCY_PICKUP")
+	}
+
 	const openHomeMenu = () => {
 		setRouteSpots([])
 		setMenuSate('IDLE')
@@ -202,7 +230,7 @@ const Home = () => {
 							userContext.currentUserId == 3 &&
 							<img src={HFireDeptBanner} className='fireStationBanner'/> 
 						}
-						<div className='fromToContainer'>
+						<div className={userContext.currentUserId == 3 ? 'fromToContainer fireMenuBg' : 'fromToContainer'}>
 							{
 							// from is not needed if the user is the fire station
 							userContext.currentUserId != 3 ? 
@@ -224,15 +252,16 @@ const Home = () => {
 							</div>
 						</div>
 						<div className='otherMenuItems'>
-							<div className='menuItem'>
-								<img src={PersonIcon} className='menuItemIcon' />
-								<NumericInput className='personCountInput' min={1} max={100} defaultValue={1} 
-									format={(num) => {return num + (num==1?' person':' persons')}}
-									onChange={(newVal)=>{setCommuterCount(newVal)}}/>
-							</div>
 							{
-								// car mode not needed in fire station
+								// car mode and commuter count not needed in fire station
 								userContext.currentUserId != 3 &&	
+								<>
+								<div className='menuItem'>
+									<img src={PersonIcon} className='menuItemIcon' />
+									<NumericInput className='personCountInput' min={1} max={100} defaultValue={1} 
+										format={(num) => {return num + (num==1?' person':' persons')}}
+										onChange={(newVal)=>{setCommuterCount(newVal)}}/>
+								</div>
 								<div className='menuItem'>
 									<img src={CarMenuIcon} className='menuItemIcon' />
 									<div className='binaryRadio'>
@@ -244,10 +273,17 @@ const Home = () => {
 											onChange={(e)=> {setCarMode(CarMode.CARPOOL)}} />
 									</div>
 								</div>
+								</>
 							}
-							<button className='findCarButton' onClick={() => findCar()}>
-								<img className='searchIcon' src={SearchIcon} />
-								<p>Find Car</p>
+							<button className={userContext.currentUserId == 3 ? 'findCarButton fireButton' : 'findCarButton'}
+									onClick={() => {
+											 userContext.currentUserId != 3 ?
+											 	findCar()
+											:
+												pickupFireFighters()
+											}}>
+								<img className='searchIcon' src={userContext.currentUserId == 3 ? WarningIcon : SearchIcon} />
+								<p>{userContext.currentUserId == 3 ? "Send Car" : "Find Car"}</p>
 							</button>
 						</div>
 					</>
@@ -347,6 +383,14 @@ const Home = () => {
 							<button className='smLeavingButton' onClick={() => {openHomeMenu()}}>Exit Car</button>
 						</div>
 						<img src={smLeavingImg} className='smLeavingImg' />
+					</div>
+
+				}
+				{
+					menuState==='EMERGENCY_PICKUP' &&
+					<div className='smEmergency'>
+						<img src={HFireDeptBanner} className='fireStationBanner'/>
+						<img src={HelpIsOnTheWay} className='helpIsOnTheWay' />
 					</div>
 
 				}
