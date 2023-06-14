@@ -33,8 +33,8 @@ const LocationIcon = (props) => {
             props.landmark.location.coordinates[0],
             props.landmark.location.coordinates[1],
         ]}
-        icon = {type == "firefighter" ? FireFighterIcon 
-                    : 
+        icon = {type == "firefighter" ? FireFighterIcon
+                    :
                     new Icon({
                         iconUrl: require(`../../Images/markers/${props.landmark.icon}.png`),
                         iconSize: [50, 50],
@@ -43,7 +43,7 @@ const LocationIcon = (props) => {
                     })}
         data={props.landmark.location}
         eventHandlers={
-            type == "firefighter" ? 
+            type == "firefighter" ?
             null:
             {
             click: (e) => {
@@ -64,6 +64,9 @@ const LocationIcon = (props) => {
             },
         }}
     >
+        {/* <Popup>
+            <p>Hello there</p>
+        </Popup> */}
     </Marker>
     );
 };

@@ -31,6 +31,7 @@ const CarIcon = (props) => {
   // console.log(props.data.carName == 'Red');
   return (
     <LeafletTrackingMarker 
+      zIndexOffset={100}
       position={[lat, lon]}
       previousPosition={prevPos}
       duration={props.duration}

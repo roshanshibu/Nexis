@@ -113,7 +113,7 @@ const Home = () => {
 						setToLocation(null)
 					}
 				}
-				if(data[EmergencyCarKey]){
+				if(data[EmergencyCarKey] && userContext.currentUserId == 3){
 					if(data[EmergencyCarKey][2] == 'IDLE')
 						setMenuSate('IDLE')
 					else
