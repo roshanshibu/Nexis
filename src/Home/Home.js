@@ -58,6 +58,7 @@ const Home = () => {
 	const [commuterCount, setCommuterCount] = useState(1);
 	const [carMode, setCarMode] = useState(CarMode.NORMAL)
 	const [currentCarKey, setCurrentCarKey] = useState(null);
+	const [currentPin, setCurrentPin] = useState(null);
 	const [currentCarETA, setCurrentCarETA] = useState(0);
 	const [currentCarState, setCurrentCarState] = useState("");
 
@@ -148,6 +149,12 @@ const Home = () => {
 
 	const userContext = useContext(UserContext);
 
+	
+	const generatePin = () => {
+		let pin = Array.from(Array(6), () => Math.floor(Math.random() * 36).toString(36)).join('').toUpperCase()
+		return pin
+	}
+
 	const findCar = () => {
 		if (!fromLocation || !toLocation){
 			alert("Enter the source and destination")
@@ -167,6 +174,7 @@ const Home = () => {
 			.then((response) => {
 				console.log("nearest car:", response);
 				setCurrentCarKey(response.key)
+				setCurrentPin (generatePin())
 				setSubMenuText(`$CAR${response.key}`)
 				//initiate the pickup
 				initiatePickup(fromLocation.coordinates, response.key, userContext.currentUserId, commuterCount, carMode)
@@ -202,6 +210,7 @@ const Home = () => {
 			.then((response) => {
 				setMenuSate('IDLE')
 				setHighlightPath(null)
+				setRouteSpots(null)
 			})
 	}
 
@@ -325,7 +334,7 @@ const Home = () => {
 								<div className='smCarDetailsText'>
 									<p style={{fontSize: "15px"}}>Your Ride</p>
 									<p style={{fontSize: "45px", fontWeight: 700}}>{subMenuText.slice(4)}</p>
-									<p style={{fontSize: "30px"}}>L31M3N</p>
+									<p style={{fontSize: "30px"}}>{currentPin}</p>
 								</div>
 								<img src={smCarDetailsImg} className='smCarDetailsImg'/>
 							</div>
@@ -499,14 +508,28 @@ const Home = () => {
 							<Marker 
 							key={landmark.name}
 							position={[landmark.lat, landmark.lon]}
+							icon = {new Icon({
+								iconUrl: require(`../Images/spotMarkers/${landmark.type}.svg`),
+								iconSize: [50, 50],
+								shadowUrl: require('../Images/markers/marker-shadow.png'),
+								shadowSize: [50, 50]
+							})}
 							>
 								<Popup>
-									<h3>{landmark.name}</h3>
-									<p style={{textTransform: "capitalize"}}>{landmark.type}</p>
+									<div className='spotPopup'>
+										<h3>{landmark.name}</h3>
+										<p style={{textTransform: "capitalize"}}>{landmark.type}</p>
+									</div>
 								</Popup>	
 							</Marker>
 					))
 				}
+			<Marker 
+				position={[49.349019, 8.688801]}
+				icon={new Icon({
+					iconUrl: require('../Images/i_base.png'),
+					iconSize: [20, 20],})}
+			/>
 			</MapContainer>
 		</div>
 	);

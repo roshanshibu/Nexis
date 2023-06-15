@@ -360,3 +360,16 @@ input:focus{
   width: 300px;
   padding-top: 20px;
 }
+
+
+/* Spot Marker */
+.spotPopup{
+  display: flex;
+  flex-direction: column;
+}
+.spotPopup h3{
+  margin: 0;
+}
+.spotPopup p{
+  margin: 0;
+}
